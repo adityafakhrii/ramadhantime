@@ -48,13 +48,13 @@ export function PWAPrompt() {
                             <Download className="w-5 h-5" />
                         </div>
                         <div>
-                            <p className="font-bold text-sm text-foreground">Install Aplikasi</p>
-                            <p className="text-[11px] text-muted-foreground">Akses lebih cepat & mode offline</p>
+                            <p className="font-bold text-sm text-foreground">Pasang App Nya Cuy</p>
+                            <p className="text-[11px] text-muted-foreground">Biar buka cepet & bisa offline</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
                         <Button size="sm" onClick={handleInstall} className="rounded-xl h-8 px-3 text-xs">
-                            Install
+                            Gass Pasang!
                         </Button>
                         <Button variant="ghost" size="icon" onClick={handleDismiss} className="w-8 h-8 rounded-full text-muted-foreground">
                             <X className="w-4 h-4" />

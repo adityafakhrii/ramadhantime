@@ -16,8 +16,8 @@ export interface MonthlyPrayerData {
   [date: string]: PrayerTimesData;
 }
 
-function getCacheKey(lat: number, lng: number, month: number, year: number) {
-  return `ramadhan-prayer-${lat.toFixed(2)}-${lng.toFixed(2)}-${month}-${year}`;
+function getCacheKey(lat: number, lng: number, year: number) {
+  return `ramadhan-prayer-${lat.toFixed(2)}-${lng.toFixed(2)}-${year}`;
 }
 
 export function usePrayerTimes(location: LocationData | null) {
@@ -38,11 +38,11 @@ export function usePrayerTimes(location: LocationData | null) {
     const now = new Date();
     const month = now.getMonth() + 1;
     const year = now.getFullYear();
-    const cacheKey = getCacheKey(location.latitude, location.longitude, month, year);
+    const cacheKey = getCacheKey(location.latitude, location.longitude, year);
 
     try {
       const res = await fetch(
-        `https://api.aladhan.com/v1/calendar/${year}/${month}?latitude=${location.latitude}&longitude=${location.longitude}&method=20&tune=2,0,0,0,0,0,0,0,0`
+        `https://api.aladhan.com/v1/calendar/${year}?latitude=${location.latitude}&longitude=${location.longitude}&method=20&tune=2,0,0,0,0,0,0,0,0`
       );
 
       if (!res.ok) throw new Error('API error');
@@ -51,27 +51,28 @@ export function usePrayerTimes(location: LocationData | null) {
       const data = json.data;
 
       const monthly: MonthlyPrayerData = {};
-      const todayStr = String(now.getDate()).padStart(2, '0');
+      const todayStr = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${year}`;
 
-      data.forEach((day: any) => {
-        const t = day.timings;
-        const dateStr = day.date.gregorian.date; // DD-MM-YYYY
-        const entry: PrayerTimesData = {
-          Imsak: t.Imsak.split(' ')[0],
-          Fajr: t.Fajr.split(' ')[0],
-          Sunrise: t.Sunrise.split(' ')[0],
-          Dhuhr: t.Dhuhr.split(' ')[0],
-          Asr: t.Asr.split(' ')[0],
-          Maghrib: t.Maghrib.split(' ')[0],
-          Isha: t.Isha.split(' ')[0],
-          date: dateStr,
-        };
-        monthly[dateStr] = entry;
+      Object.keys(data).forEach((monthKey) => {
+        data[monthKey].forEach((day: any) => {
+          const t = day.timings;
+          const dateStr = day.date.gregorian.date; // DD-MM-YYYY
+          const entry: PrayerTimesData = {
+            Imsak: t.Imsak.split(' ')[0],
+            Fajr: t.Fajr.split(' ')[0],
+            Sunrise: t.Sunrise.split(' ')[0],
+            Dhuhr: t.Dhuhr.split(' ')[0],
+            Asr: t.Asr.split(' ')[0],
+            Maghrib: t.Maghrib.split(' ')[0],
+            Isha: t.Isha.split(' ')[0],
+            date: dateStr,
+          };
+          monthly[dateStr] = entry;
 
-        const dayNum = dateStr.split('-')[0];
-        if (dayNum === todayStr) {
-          setTodayTimes(entry);
-        }
+          if (dateStr === todayStr) {
+            setTodayTimes(entry);
+          }
+        });
       });
 
       setMonthlyTimes(monthly);
@@ -85,9 +86,10 @@ export function usePrayerTimes(location: LocationData | null) {
       if (cached) {
         const monthly = JSON.parse(cached) as MonthlyPrayerData;
         setMonthlyTimes(monthly);
-        const todayStr = String(now.getDate()).padStart(2, '0');
-        const todayKey = Object.keys(monthly).find(k => k.startsWith(todayStr));
-        if (todayKey) setTodayTimes(monthly[todayKey]);
+        const todayStr = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${year}`;
+        if (monthly[todayStr]) {
+          setTodayTimes(monthly[todayStr]);
+        }
       }
     } finally {
       setLoading(false);

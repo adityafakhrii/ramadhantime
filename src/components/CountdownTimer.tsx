@@ -36,10 +36,10 @@ export function CountdownTimer({ hours, minutes, seconds, label, targetTime, pro
   return (
     <div className="flex flex-col items-center gap-3">
       <p className="text-xs font-medium tracking-[0.2em] uppercase text-muted-foreground">
-        Countdown
+        Hitung Mundur
       </p>
 
-      <div 
+      <div
         className="relative flex items-center justify-center my-2"
         style={{ width: size + 30, height: size + 30 }}
       >
@@ -111,7 +111,7 @@ export function CountdownTimer({ hours, minutes, seconds, label, targetTime, pro
           </div>
 
           <p className="text-[11px] text-muted-foreground mt-2 text-center max-w-[120px] leading-tight">
-            {label === 'Menuju Maghrib' ? 'Remaining for Iftar' : 'Remaining for Sahur'}
+            {label.includes('Buka') ? 'Nunggu Iftar' : 'Nunggu Imsak'}
           </p>
         </div>
       </div>

@@ -13,7 +13,13 @@ const PRAYER_LABELS: Record<string, string> = {
 };
 
 export function CalendarView({ monthlyTimes }: CalendarViewProps) {
-  const entries = Object.entries(monthlyTimes).sort(([a], [b]) => {
+  const entries = Object.entries(monthlyTimes).filter(([date]) => {
+    const [d, m] = date.split('-').map(Number);
+    // Ramadhan window: Feb 19 to Mar 20
+    if (m === 2 && d >= 19) return true;
+    if (m === 3 && d <= 20) return true;
+    return false;
+  }).sort(([a], [b]) => {
     const [da, ma, ya] = a.split('-').map(Number);
     const [db, mb, yb] = b.split('-').map(Number);
     return new Date(ya, ma - 1, da).getTime() - new Date(yb, mb - 1, db).getTime();
@@ -25,7 +31,7 @@ export function CalendarView({ monthlyTimes }: CalendarViewProps) {
   if (entries.length === 0) {
     return (
       <div className="flex items-center justify-center h-64 text-muted-foreground">
-        <p>Tidak ada data kalender tersedia.</p>
+        <p>Belom ada jadwal nih, set lokasi dulu ges.</p>
       </div>
     );
   }
@@ -33,11 +39,11 @@ export function CalendarView({ monthlyTimes }: CalendarViewProps) {
   return (
     <ScrollArea className="h-[calc(100vh-10rem)]">
       <div className="space-y-3 px-4 pb-28 pt-2">
-        <h2 className="text-lg font-bold text-foreground">Monthly Schedule</h2>
+        <h2 className="text-lg font-bold text-foreground">Jadwal Ramadhan Sebulan</h2>
         {entries.map(([date, times], i) => {
           const isToday = date === todayStr;
           const [day, month] = date.split('-');
-          const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+          const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
           const dateObj = new Date(Number(date.split('-')[2]), Number(month) - 1, Number(day));
           const dayName = dayNames[dateObj.getDay()];
 
@@ -47,9 +53,8 @@ export function CalendarView({ monthlyTimes }: CalendarViewProps) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.02 }}
-              className={`rounded-2xl p-4 transition-all ${
-                isToday ? 'shadow-neu bg-background' : 'bg-background/50'
-              }`}
+              className={`rounded-2xl p-4 transition-all ${isToday ? 'shadow-neu bg-background' : 'bg-background/50'
+                }`}
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
@@ -60,7 +65,7 @@ export function CalendarView({ monthlyTimes }: CalendarViewProps) {
                 </div>
                 {isToday && (
                   <span className="text-[10px] bg-foreground text-background px-3 py-1 rounded-full font-semibold">
-                    Today
+                    Hari Ini
                   </span>
                 )}
               </div>

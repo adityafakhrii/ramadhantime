@@ -49,21 +49,21 @@ export function useCountdown(prayerTimes: PrayerTimesData | null): CountdownStat
     let periodStart: number;
     let periodEnd: number;
 
-    if (currentMin < maghribMin) {
-      // Before Maghrib → countdown to Maghrib
+    if (currentMin < maghribMin && currentMin >= fajrMin) {
+      // After Subuh, before Maghrib → countdown to Maghrib (Iftar)
       targetDate = timeToDate(prayerTimes.Maghrib);
-      label = "Menuju Maghrib";
+      label = "Menuju Buka Pe-we"; // Casual Iftar
       periodStart = fajrMin;
       periodEnd = maghribMin;
     } else {
-      // After Maghrib → countdown to tomorrow's Imsak
-      targetDate = timeToDate(prayerTimes.Imsak);
-      if (currentMin > imsakMin) {
+      // After Maghrib or before Subuh → countdown to Subuh (End of Sahur)
+      targetDate = timeToDate(prayerTimes.Fajr);
+      if (currentMin > fajrMin) {
         targetDate.setDate(targetDate.getDate() + 1);
       }
-      label = "Menuju Imsak";
-      periodStart = ishaMin;
-      periodEnd = imsakMin + (imsakMin < ishaMin ? 24 * 60 : 0);
+      label = "Ngebut Sahur"; // Casual Subuh/Sahur limit
+      periodStart = maghribMin;
+      periodEnd = fajrMin + (fajrMin < maghribMin ? 24 * 60 : 0);
     }
 
     const diff = targetDate.getTime() - now.getTime();
@@ -83,7 +83,7 @@ export function useCountdown(prayerTimes: PrayerTimesData | null): CountdownStat
       minutes,
       seconds,
       label,
-      targetTime: label.includes('Maghrib') ? prayerTimes.Maghrib : prayerTimes.Imsak,
+      targetTime: label.includes('Buka') ? prayerTimes.Maghrib : prayerTimes.Fajr,
       progress,
     };
   }, [prayerTimes, now]);
@@ -92,14 +92,14 @@ export function useCountdown(prayerTimes: PrayerTimesData | null): CountdownStat
     // Only trigger once when countdown hits exactly 00:00:00
     if (state && state.hours === 0 && state.minutes === 0 && state.seconds === 0) {
       if ('Notification' in window && Notification.permission === 'granted') {
-        const isMaghrib = state.label.includes('Maghrib');
+        const isMaghrib = state.label.includes('Buka');
         const notifKey = isMaghrib ? 'ramadhan-notif-iftar' : 'ramadhan-notif-sahur';
         // default enabled unless manually disabled
         if (localStorage.getItem(notifKey) !== 'false') {
-          new Notification(`Waktu ${isMaghrib ? 'Berbuka Puasa' : 'Imsak'} Telah Tiba!`, {
+          new Notification(isMaghrib ? 'Woy Buka Puasa Tiba!' : 'Udah Subuh Cuy!', {
             body: isMaghrib
-              ? 'Selamat berbuka puasa. Jangan lupa membaca doa berbuka.'
-              : 'Waktu Imsak telah tiba. Segera hentikan aktivitas sahur Anda.',
+              ? 'Gasskeun minum yang manis-manis. Jangan lupa doa bang.'
+              : 'Waktu sahur fix udahan. Selamat menahan hawa nafsu seharian!',
             icon: '/favicon.ico',
             requireInteraction: true
           });

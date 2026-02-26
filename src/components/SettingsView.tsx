@@ -97,8 +97,8 @@ export function SettingsView({
           <div className="flex items-center gap-3">
             <Bell className="w-5 h-5 text-foreground" />
             <div>
-              <p className="font-semibold text-sm text-foreground">Iftar Alert</p>
-              <p className="text-xs text-muted-foreground">Notifikasi saat Maghrib</p>
+              <p className="font-semibold text-sm text-foreground">Alarm Buka</p>
+              <p className="text-xs text-muted-foreground">Notifikasi pas Maghrib</p>
             </div>
           </div>
           <Switch checked={iftarNotif} onCheckedChange={onToggleIftar} />
@@ -107,8 +107,8 @@ export function SettingsView({
           <div className="flex items-center gap-3">
             <Bell className="w-5 h-5 text-foreground" />
             <div>
-              <p className="font-semibold text-sm text-foreground">Sahur Alert</p>
-              <p className="text-xs text-muted-foreground">Notifikasi saat Imsak</p>
+              <p className="font-semibold text-sm text-foreground">Alarm Sahur</p>
+              <p className="text-xs text-muted-foreground">Notifikasi pas Subuh/Imsak</p>
             </div>
           </div>
           <Switch checked={sahurNotif} onCheckedChange={onToggleSahur} />
@@ -133,13 +133,13 @@ export function SettingsView({
           className="w-full rounded-xl"
         >
           <MapPin className="w-4 h-4 mr-1" />
-          {locationLoading ? 'Detecting...' : 'Auto Detect'}
+          {locationLoading ? 'Bentar, lagi nyari...' : 'Lacak Otomatis'}
         </Button>
 
         <div className="relative" ref={dropdownRef}>
           <div className="flex gap-2">
             <Input
-              placeholder="Search city..."
+              placeholder="Cari nama kota..."
               value={searchQuery}
               onChange={e => {
                 setSearchQuery(e.target.value);
@@ -191,7 +191,7 @@ export function SettingsView({
                     ))}
                   </div>
                 ) : (
-                  <div className="p-3 text-sm text-muted-foreground text-center">Kota tidak ditemukan</div>
+                  <div className="p-3 text-sm text-muted-foreground text-center">Gak nemu kotanya ngab :(</div>
                 )}
               </div>
             </div>

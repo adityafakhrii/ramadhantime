@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { MapPin } from 'lucide-react';
+import { MapPin, Sunset, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/hooks/useTheme';
 import { useLocation } from '@/hooks/useLocation';
@@ -89,7 +89,7 @@ const Index = () => {
                   </div>
                   <div className="flex items-center gap-1.5 mt-2 text-sm text-muted-foreground">
                     <MapPin className="w-3.5 h-3.5" />
-                    <span>{location ? location.city : 'Lokasi Belum Diatur'}</span>
+                    <span>{location ? location.city : 'Blom ada lokasi nih'}</span>
                   </div>
                 </header>
 
@@ -102,70 +102,65 @@ const Index = () => {
                         <MapPin className="w-8 h-8" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-foreground">Lokasi Belum Diatur</h3>
+                        <h3 className="text-xl font-bold text-foreground">Lokasi Kosong Bang</h3>
                         <p className="text-sm text-muted-foreground mt-2">
-                          Izinkan akses lokasi atau atur kota Anda secara manual untuk melihat jadwal Ramadhan.
+                          Izinin app gue baca lokasi lu, atau set manual dah bair jadwalnya akurat.
                         </p>
                       </div>
                       <button
                         onClick={() => setActiveTab('settings')}
                         className="mt-2 px-6 py-2.5 rounded-xl bg-foreground text-background font-semibold text-sm hover:opacity-90 transition-opacity"
                       >
-                        Atur Lokasi
+                        Gass Atur Lokasi
                       </button>
                     </div>
                   </div>
                 ) : (
                   <div className="px-5 space-y-5">
                     <RealtimeClock />
-                    {/* Alert Cards Row */}
+                    {/* Main Layout: Alert Column & Prayer List Column */}
                     <div className="grid grid-cols-2 gap-3">
-                      {/* Iftar Alert Card */}
-                      <div className="rounded-2xl shadow-neu p-4 bg-background">
-                        <div className="flex items-center justify-between mb-3">
-                          <svg width="16" height="16" viewBox="0 0 24 24" className="text-foreground">
-                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.7 0 3.3-.4 4.7-1.1C13.5 19.3 11 16 11 12s2.5-7.3 5.7-8.9C15.3 2.4 13.7 2 12 2z" fill="currentColor" />
-                          </svg>
-                          <Switch checked={iftarNotif} onCheckedChange={toggleIftar} />
+
+                      {/* Alert Column */}
+                      <div className="flex flex-col gap-3">
+                        {/* Iftar Alert Card */}
+                        <div className="rounded-2xl shadow-neu p-4 bg-background flex-1 flex flex-col justify-between">
+                          <div className="flex items-center justify-between mb-3">
+                            <Sunset className="w-5 h-5 text-foreground" />
+                            <Switch checked={iftarNotif} onCheckedChange={toggleIftar} />
+                          </div>
+                          <div>
+                            <p className="text-4xl font-bold font-mono-timer text-foreground">
+                              {todayTimes?.Maghrib || '--:--'}
+                            </p>
+                            <p className="text-sm text-muted-foreground mt-1">Alarm Buka</p>
+                          </div>
                         </div>
-                        <p className="text-3xl font-bold font-mono-timer text-foreground">
-                          {todayTimes?.Maghrib || '--:--'}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">Iftar Alert</p>
+
+                        {/* Sehar Alert Card */}
+                        <div className="rounded-2xl shadow-neu p-4 bg-background flex-1 flex flex-col justify-between">
+                          <div className="flex items-center justify-between mb-3">
+                            <Moon className="w-5 h-5 text-foreground" />
+                            <Switch checked={sahurNotif} onCheckedChange={toggleSahur} />
+                          </div>
+                          <div>
+                            <p className="text-4xl font-bold font-mono-timer text-foreground">
+                              {todayTimes?.Imsak || '--:--'}
+                            </p>
+                            <p className="text-sm text-muted-foreground mt-1">Alarm Sahur</p>
+                          </div>
+                        </div>
                       </div>
 
-                      {/* Prayer List Card */}
-                      {todayTimes && <PrayerSchedule times={todayTimes} />}
-                    </div>
-
-                    {/* Sehar Alert Card */}
-                    <div className="rounded-2xl shadow-neu p-4 bg-background flex items-center justify-between">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <svg width="14" height="14" viewBox="0 0 24 24" className="text-foreground">
-                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.7 0 3.3-.4 4.7-1.1C13.5 19.3 11 16 11 12s2.5-7.3 5.7-8.9C15.3 2.4 13.7 2 12 2z" fill="currentColor" />
-                          </svg>
-                          <Switch checked={sahurNotif} onCheckedChange={toggleSahur} />
-                        </div>
-                        <p className="text-3xl font-bold font-mono-timer text-foreground">
-                          {todayTimes?.Imsak || '--:--'}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">Sehar Alert</p>
+                      {/* Prayer List Card Column */}
+                      <div className="flex flex-col">
+                        {todayTimes && <PrayerSchedule times={todayTimes} />}
                       </div>
-                      {/* Countdown preview */}
-                      {countdown && (
-                        <div className="text-right">
-                          <p className="text-xs text-muted-foreground">{countdown.label}</p>
-                          <p className="text-lg font-bold font-mono-timer text-foreground">
-                            {String(countdown.hours).padStart(2, '0')}:{String(countdown.minutes).padStart(2, '0')}
-                          </p>
-                        </div>
-                      )}
                     </div>
 
                     {/* Greeting */}
                     <p className="text-center text-xs text-muted-foreground italic pb-2">
-                      Selamat Menjalankan Ibadah Puasa
+                      Stay Halal Brother & Sister! ✨
                     </p>
                   </div>
                 )}
@@ -188,16 +183,16 @@ const Index = () => {
                         <MapPin className="w-8 h-8" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-foreground">Lokasi Belum Diatur</h3>
+                        <h3 className="text-xl font-bold text-foreground">Lokasi Kosong Bang</h3>
                         <p className="text-sm text-muted-foreground mt-2">
-                          Silakan atur lokasi Anda terlebih dahulu untuk melihat kalender jadwal puasa.
+                          Lu belum set lokasi, gimana gue mau ngasih liat hitung mundurnya bor.
                         </p>
                       </div>
                       <button
                         onClick={() => setActiveTab('settings')}
                         className="mt-2 px-6 py-2.5 rounded-xl bg-foreground text-background font-semibold text-sm hover:opacity-90 transition-opacity"
                       >
-                        Atur Lokasi
+                        Gass Atur Lokasi
                       </button>
                     </div>
                   </div>
@@ -228,11 +223,11 @@ const Index = () => {
                       <div className="rounded-2xl shadow-neu-sm p-3 bg-background flex flex-col justify-center">
                         <div className="flex items-center justify-between">
                           <p className="text-xs text-muted-foreground">
-                            {countdown.label.includes('Maghrib') ? 'Iftar Alert' : 'Sahur Alert'}
+                            {countdown.label.includes('Buka') ? 'Alarm Buka' : 'Alarm Sahur'}
                           </p>
                           <Switch
-                            checked={countdown.label.includes('Maghrib') ? iftarNotif : sahurNotif}
-                            onCheckedChange={countdown.label.includes('Maghrib') ? toggleIftar : toggleSahur}
+                            checked={countdown.label.includes('Buka') ? iftarNotif : sahurNotif}
+                            onCheckedChange={countdown.label.includes('Buka') ? toggleIftar : toggleSahur}
                           />
                         </div>
                       </div>

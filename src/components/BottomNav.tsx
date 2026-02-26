@@ -1,4 +1,4 @@
-import { Home, CalendarDays, Settings } from 'lucide-react';
+import { Home, Timer, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export type TabType = 'home' | 'calendar' | 'settings';
@@ -9,9 +9,9 @@ interface BottomNavProps {
 }
 
 const tabs = [
-  { id: 'home' as TabType, label: 'Home', icon: Home },
-  { id: 'calendar' as TabType, label: 'Calendar', icon: CalendarDays },
-  { id: 'settings' as TabType, label: 'Settings', icon: Settings },
+  { id: 'home' as TabType, label: 'Beranda', icon: Home },
+  { id: 'calendar' as TabType, label: 'Jadwal', icon: Timer },
+  { id: 'settings' as TabType, label: 'Setingan', icon: Settings },
 ];
 
 export function BottomNav({ active, onChange }: BottomNavProps) {

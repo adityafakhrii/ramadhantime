@@ -7,11 +7,11 @@ interface PrayerScheduleProps {
 
 const PRAYER_LABELS: { key: keyof PrayerTimesData; label: string }[] = [
   { key: 'Imsak', label: 'Imsak' },
-  { key: 'Fajr', label: 'Fajr' },
-  { key: 'Dhuhr', label: 'Dhuhr' },
-  { key: 'Asr', label: 'Asr' },
+  { key: 'Fajr', label: 'Subuh' },
+  { key: 'Dhuhr', label: 'Dzuhur' },
+  { key: 'Asr', label: 'Ashar' },
   { key: 'Maghrib', label: 'Maghrib' },
-  { key: 'Isha', label: 'Isha' },
+  { key: 'Isha', label: 'Isya' },
 ];
 
 function getNextPrayer(times: PrayerTimesData): string | null {
@@ -32,9 +32,9 @@ export function PrayerSchedule({ times }: PrayerScheduleProps) {
     <div className="rounded-2xl shadow-neu p-5 bg-background">
       <div className="flex items-center gap-2 mb-4">
         <svg width="18" height="18" viewBox="0 0 24 24" className="text-foreground">
-          <path d="M3 21h18v-2H3v2zm0-4h18v-2H3v2zm0-4h18v-2H3v2zm0-4h18V7H3v2zm0-6v2h18V3H3z" fill="currentColor" opacity="0.6"/>
+          <path d="M3 21h18v-2H3v2zm0-4h18v-2H3v2zm0-4h18v-2H3v2zm0-4h18V7H3v2zm0-6v2h18V3H3z" fill="currentColor" opacity="0.6" />
         </svg>
-        <h3 className="text-sm font-bold text-foreground tracking-wide">Azan</h3>
+        <h3 className="text-xl font-bold text-foreground tracking-wide">Azan</h3>
       </div>
       <div className="space-y-1">
         {PRAYER_LABELS.map((prayer, i) => {
