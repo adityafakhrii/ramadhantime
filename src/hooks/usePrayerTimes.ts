@@ -10,6 +10,7 @@ export interface PrayerTimesData {
   Maghrib: string;
   Isha: string;
   date: string; // DD-MM-YYYY
+  hijri: string; // Hijri DD Month YYYY
 }
 
 export interface MonthlyPrayerData {
@@ -56,6 +57,7 @@ export function usePrayerTimes(location: LocationData | null) {
       Object.keys(data).forEach((monthKey) => {
         data[monthKey].forEach((day: any) => {
           const t = day.timings;
+          const h = day.date.hijri;
           const dateStr = day.date.gregorian.date; // DD-MM-YYYY
           const entry: PrayerTimesData = {
             Imsak: t.Imsak.split(' ')[0],
@@ -66,6 +68,7 @@ export function usePrayerTimes(location: LocationData | null) {
             Maghrib: t.Maghrib.split(' ')[0],
             Isha: t.Isha.split(' ')[0],
             date: dateStr,
+            hijri: `${h.day} ${h.month.en} ${h.year}`,
           };
           monthly[dateStr] = entry;
 

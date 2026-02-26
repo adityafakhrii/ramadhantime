@@ -11,7 +11,7 @@ interface BottomNavProps {
 const tabs = [
   { id: 'home' as TabType, label: 'Beranda', icon: Home },
   { id: 'calendar' as TabType, label: 'Jadwal', icon: Timer },
-  { id: 'settings' as TabType, label: 'Setingan', icon: Settings },
+  { id: 'settings' as TabType, label: 'Pengaturan', icon: Settings },
 ];
 
 export function BottomNav({ active, onChange }: BottomNavProps) {

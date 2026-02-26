@@ -39,7 +39,7 @@ export function CalendarView({ monthlyTimes }: CalendarViewProps) {
   return (
     <ScrollArea className="h-[calc(100vh-10rem)]">
       <div className="space-y-3 px-4 pb-28 pt-2">
-        <h2 className="text-lg font-bold text-foreground">Jadwal Ramadhan Sebulan</h2>
+        <h2 className="text-lg font-bold text-foreground">Hitung Mundur Ramadhan</h2>
         {entries.map(([date, times], i) => {
           const isToday = date === todayStr;
           const [day, month] = date.split('-');
@@ -57,11 +57,16 @@ export function CalendarView({ monthlyTimes }: CalendarViewProps) {
                 }`}
             >
               <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <span className={`text-2xl font-bold font-mono-timer ${isToday ? 'text-foreground' : 'text-muted-foreground'}`}>
-                    {day}
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex items-center gap-3">
+                    <span className={`text-2xl font-bold font-mono-timer ${isToday ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {day}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{dayName}</span>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground/70 font-medium tracking-wide">
+                    {times.hijri}
                   </span>
-                  <span className="text-xs text-muted-foreground">{dayName}</span>
                 </div>
                 {isToday && (
                   <span className="text-[10px] bg-foreground text-background px-3 py-1 rounded-full font-semibold">
