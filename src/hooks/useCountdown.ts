@@ -35,7 +35,7 @@ export function useCountdown(prayerTimes: PrayerTimesData | null): CountdownStat
     return () => clearInterval(interval);
   }, []);
 
-  return useMemo(() => {
+  const state = useMemo(() => {
     if (!prayerTimes) return null;
 
     const currentMin = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
@@ -87,4 +87,25 @@ export function useCountdown(prayerTimes: PrayerTimesData | null): CountdownStat
       progress,
     };
   }, [prayerTimes, now]);
+
+  useEffect(() => {
+    // Only trigger once when countdown hits exactly 00:00:00
+    if (state && state.hours === 0 && state.minutes === 0 && state.seconds === 0) {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        // default enabled unless manually disabled
+        if (localStorage.getItem('ramadhan-notif') !== 'false') {
+          const isMaghrib = state.label.includes('Maghrib');
+          new Notification(`Waktu ${isMaghrib ? 'Berbuka Puasa' : 'Imsak'} Telah Tiba!`, {
+            body: isMaghrib
+              ? 'Selamat berbuka puasa. Jangan lupa membaca doa berbuka.'
+              : 'Waktu Imsak telah tiba. Segera hentikan aktivitas sahur Anda.',
+            icon: '/favicon.ico',
+            requireInteraction: true
+          });
+        }
+      }
+    }
+  }, [state?.hours, state?.minutes, state?.seconds, state?.label]);
+
+  return state;
 }

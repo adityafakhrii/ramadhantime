@@ -39,11 +39,13 @@ export function CountdownTimer({ hours, minutes, seconds, label, targetTime, pro
         Countdown
       </p>
 
-      <div className="relative flex items-center justify-center">
+      <div 
+        className="relative flex items-center justify-center my-2"
+        style={{ width: size + 30, height: size + 30 }}
+      >
         {/* Neumorphic circle bg */}
         <div
-          className="absolute rounded-full shadow-neu"
-          style={{ width: size + 30, height: size + 30 }}
+          className="absolute inset-0 rounded-full shadow-neu bg-background"
         />
 
         <svg width={size} height={size} className="relative z-10">
@@ -89,32 +91,30 @@ export function CountdownTimer({ hours, minutes, seconds, label, targetTime, pro
             />
           </svg>
 
-          <div className="flex items-baseline font-mono-timer">
+          <div className="flex flex-col items-center font-mono-timer justify-center">
             <motion.span
-              key={`h-${hours}`}
+              key={`h-${hours}-${minutes}`}
               initial={{ opacity: 0.6 }}
               animate={{ opacity: 1 }}
-              className="text-4xl font-bold text-foreground tabular-nums"
+              className="text-4xl font-bold text-foreground tabular-nums leading-none tracking-tight"
             >
               {pad(hours)}:{pad(minutes)}
             </motion.span>
+            <motion.span
+              key={seconds}
+              initial={{ opacity: 0.5 }}
+              animate={{ opacity: 1 }}
+              className="text-lg font-medium text-muted-foreground tabular-nums mt-1"
+            >
+              :{pad(seconds)}
+            </motion.span>
           </div>
 
-          <p className="text-[11px] text-muted-foreground mt-1">
-            {label === 'Menuju Maghrib' ? 'Mins Remaining for Iftar' : 'Mins Remaining for Sahur'}
+          <p className="text-[11px] text-muted-foreground mt-2 text-center max-w-[120px] leading-tight">
+            {label === 'Menuju Maghrib' ? 'Remaining for Iftar' : 'Remaining for Sahur'}
           </p>
         </div>
       </div>
-
-      {/* Seconds indicator */}
-      <motion.p
-        key={seconds}
-        initial={{ opacity: 0.5 }}
-        animate={{ opacity: 1 }}
-        className="font-mono-timer text-lg text-muted-foreground tabular-nums"
-      >
-        :{pad(seconds)}
-      </motion.p>
     </div>
   );
 }
