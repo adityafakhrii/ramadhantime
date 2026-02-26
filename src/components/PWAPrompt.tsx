@@ -31,7 +31,7 @@ export function PWAPrompt({ isInstallable, onInstall }: PWAPromptProps) {
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 50 }}
-                    className="fixed bottom-24 left-4 right-4 z-50 bg-background rounded-2xl p-4 shadow-neu flex items-center justify-between"
+                    className="fixed bottom-24 left-4 right-4 max-w-lg mx-auto z-50 bg-background rounded-2xl p-4 shadow-neu flex items-center justify-between"
                 >
                     <div className="flex items-center gap-3">
                         <div className="bg-foreground text-background p-2 rounded-xl">

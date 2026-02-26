@@ -6,8 +6,6 @@
     <title>Ramadhan Time - Jadwal Imsakiyah &amp; Countdown</title>
     <meta name="description" content="Aplikasi jadwal imsakiyah dan countdown maghrib untuk Ramadhan. Dapatkan jadwal sholat real-time berdasarkan lokasi Anda.">
     <meta name="theme-color" content="#2E7D32" />
-    <link rel="manifest" href="/manifest.json" />
-    
     
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary" />
@@ -21,12 +19,5 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(() => {});
-        });
-      }
-    </script>
   </body>
 </html>

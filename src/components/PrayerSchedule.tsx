@@ -57,15 +57,6 @@ export function PrayerSchedule({ times }: PrayerScheduleProps) {
                 <span className={`text-sm font-mono-timer font-semibold ${isNext ? 'text-background' : 'text-foreground'}`}>
                   {times[prayer.key] as string}
                 </span>
-                {isNext && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="w-4 h-4 rounded-full bg-background flex items-center justify-center"
-                  >
-                    <div className="w-2 h-2 rounded-full bg-foreground" />
-                  </motion.div>
-                )}
               </div>
             </motion.div>
           );
