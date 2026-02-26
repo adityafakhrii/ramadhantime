@@ -1,0 +1,17 @@
+{
+  "name": "Ramadhan Time",
+  "short_name": "Ramadhan",
+  "description": "Jadwal Imsakiyah & Countdown Maghrib",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF8E7",
+  "theme_color": "#2E7D32",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
