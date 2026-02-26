@@ -3,32 +3,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export function PWAPrompt() {
-    const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+interface PWAPromptProps {
+    isInstallable: boolean;
+    onInstall: () => void;
+}
+
+export function PWAPrompt({ isInstallable, onInstall }: PWAPromptProps) {
     const [showPrompt, setShowPrompt] = useState(false);
 
     useEffect(() => {
-        const handler = (e: any) => {
-            e.preventDefault();
-            setDeferredPrompt(e);
-            // Tunggu sebentar sebelum memunculkan popup agar tidak bentrok dengan splash
-            setTimeout(() => setShowPrompt(true), 3000);
-        };
-
-        window.addEventListener('beforeinstallprompt', handler);
-
-        return () => window.removeEventListener('beforeinstallprompt', handler);
-    }, []);
-
-    const handleInstall = async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
+        if (isInstallable) {
+            const timer = setTimeout(() => setShowPrompt(true), 3000);
+            return () => clearTimeout(timer);
+        } else {
             setShowPrompt(false);
         }
-        setDeferredPrompt(null);
-    };
+    }, [isInstallable]);
 
     const handleDismiss = () => {
         setShowPrompt(false);
@@ -53,7 +43,7 @@ export function PWAPrompt() {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Button size="sm" onClick={handleInstall} className="rounded-xl h-8 px-3 text-xs">
+                        <Button size="sm" onClick={onInstall} className="rounded-xl h-8 px-3 text-xs">
                             Gass Pasang!
                         </Button>
                         <Button variant="ghost" size="icon" onClick={handleDismiss} className="w-8 h-8 rounded-full text-muted-foreground">

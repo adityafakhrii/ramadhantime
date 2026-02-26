@@ -16,6 +16,7 @@ import { Switch } from '@/components/ui/switch';
 import { RealtimeClock } from '@/components/RealtimeClock';
 import { PWAPrompt } from '@/components/PWAPrompt';
 import { useNotifications } from '@/hooks/useNotifications';
+import { usePWA } from '@/hooks/usePWA';
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -25,6 +26,7 @@ const Index = () => {
   const { todayTimes, monthlyTimes, loading: prayerLoading } = usePrayerTimes(location);
   const countdown = useCountdown(todayTimes);
   const { iftarNotif, sahurNotif, toggleIftar, toggleSahur } = useNotifications();
+  const { isInstallable, promptInstall } = usePWA();
 
   const handleSplashFinish = useCallback(() => setShowSplash(false), []);
 
@@ -52,7 +54,7 @@ const Index = () => {
 
   return (
     <>
-      <PWAPrompt />
+      <PWAPrompt isInstallable={isInstallable} onInstall={promptInstall} />
       <div className="min-h-screen bg-background pb-24">
         <div className="max-w-lg mx-auto">
           <AnimatePresence mode="wait">
@@ -258,6 +260,8 @@ const Index = () => {
                   sahurNotif={sahurNotif}
                   onToggleIftar={toggleIftar}
                   onToggleSahur={toggleSahur}
+                  isInstallable={isInstallable}
+                  onInstallApp={promptInstall}
                 />
               </motion.div>
             )}

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Moon, Sun, Bell, MapPin, Search } from 'lucide-react';
+import { Moon, Sun, Bell, MapPin, Search, Download } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -16,11 +16,13 @@ interface SettingsViewProps {
   onToggleIftar: (val: boolean) => void;
   onToggleSahur: (val: boolean) => void;
   onSelectCity: (loc: { latitude: number; longitude: number; city: string }) => void;
+  isInstallable: boolean;
+  onInstallApp: () => void;
 }
 
 export function SettingsView({
   isDark, onToggleTheme, onSearchCity, onDetectLocation, locationLoading, cityName,
-  iftarNotif, sahurNotif, onToggleIftar, onToggleSahur, onSelectCity
+  iftarNotif, sahurNotif, onToggleIftar, onToggleSahur, onSelectCity, isInstallable, onInstallApp
 }: SettingsViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<any[]>([]);
@@ -90,6 +92,24 @@ export function SettingsView({
           <Switch checked={isDark} onCheckedChange={onToggleTheme} />
         </div>
       </div>
+
+      {/* PWA Install Button */}
+      {isInstallable && (
+        <div className="rounded-2xl shadow-neu p-5 bg-background">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Download className="w-5 h-5 text-foreground" />
+              <div>
+                <p className="font-semibold text-sm text-foreground">Pasang Aplikasi</p>
+                <p className="text-xs text-muted-foreground">Download biar bisa offline</p>
+              </div>
+            </div>
+            <Button size="sm" onClick={onInstallApp} className="rounded-xl h-8 px-4 text-xs">
+              Install
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Notifications */}
       <div className="rounded-2xl shadow-neu p-5 bg-background space-y-4">
