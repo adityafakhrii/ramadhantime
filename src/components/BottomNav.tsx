@@ -9,36 +9,36 @@ interface BottomNavProps {
 }
 
 const tabs = [
-  { id: 'home' as TabType, label: 'Beranda', icon: Home },
-  { id: 'calendar' as TabType, label: 'Kalender', icon: CalendarDays },
-  { id: 'settings' as TabType, label: 'Pengaturan', icon: Settings },
+  { id: 'home' as TabType, label: 'Home', icon: Home },
+  { id: 'calendar' as TabType, label: 'Calendar', icon: CalendarDays },
+  { id: 'settings' as TabType, label: 'Settings', icon: Settings },
 ];
 
 export function BottomNav({ active, onChange }: BottomNavProps) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-xl border-t border-border safe-area-bottom">
-      <div className="max-w-lg mx-auto flex justify-around items-center py-2">
+    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+      <div className="flex items-center gap-2 bg-foreground rounded-full px-2 py-2 shadow-lg">
         {tabs.map(tab => {
           const isActive = active === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => onChange(tab.id)}
-              className="relative flex flex-col items-center gap-0.5 py-1 px-4 transition-colors"
+              className={`
+                relative flex items-center gap-2 rounded-full px-4 py-2.5 transition-all duration-300
+                ${isActive ? 'bg-background text-foreground' : 'text-background/70 hover:text-background'}
+              `}
             >
+              <tab.icon className="w-4 h-4" />
               {isActive && (
-                <motion.div
-                  layoutId="nav-indicator"
-                  className="absolute -top-2 w-8 h-1 rounded-full bg-primary"
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                />
+                <motion.span
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: 'auto', opacity: 1 }}
+                  className="text-xs font-semibold overflow-hidden whitespace-nowrap"
+                >
+                  {tab.label}
+                </motion.span>
               )}
-              <tab.icon
-                className={`w-5 h-5 transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
-              />
-              <span className={`text-[10px] font-medium ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
-                {tab.label}
-              </span>
             </button>
           );
         })}

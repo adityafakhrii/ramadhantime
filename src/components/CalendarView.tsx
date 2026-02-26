@@ -8,12 +8,8 @@ interface CalendarViewProps {
 
 const PRAYER_ORDER = ['Imsak', 'Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'] as const;
 const PRAYER_LABELS: Record<string, string> = {
-  Imsak: 'Imsak',
-  Fajr: 'Subuh',
-  Dhuhr: 'Dzuhur',
-  Asr: 'Ashar',
-  Maghrib: 'Maghrib',
-  Isha: 'Isya',
+  Imsak: 'Imsak', Fajr: 'Fajr', Dhuhr: 'Dhuhr',
+  Asr: 'Asr', Maghrib: 'Maghrib', Isha: 'Isha',
 };
 
 export function CalendarView({ monthlyTimes }: CalendarViewProps) {
@@ -36,45 +32,35 @@ export function CalendarView({ monthlyTimes }: CalendarViewProps) {
 
   return (
     <ScrollArea className="h-[calc(100vh-10rem)]">
-      <div className="space-y-3 px-4 pb-24 pt-2">
-        <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-          📅 Jadwal Bulan Ini
-        </h2>
+      <div className="space-y-3 px-4 pb-28 pt-2">
+        <h2 className="text-lg font-bold text-foreground">Monthly Schedule</h2>
         {entries.map(([date, times], i) => {
           const isToday = date === todayStr;
           const [day, month] = date.split('-');
-          const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+          const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
           const dateObj = new Date(Number(date.split('-')[2]), Number(month) - 1, Number(day));
           const dayName = dayNames[dateObj.getDay()];
 
           return (
             <motion.div
               key={date}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.02 }}
-              className={`
-                rounded-xl p-4 border transition-all
-                ${isToday
-                  ? 'bg-primary/10 border-primary shadow-md'
-                  : 'bg-card border-border'
-                }
-              `}
-              id={isToday ? 'today-calendar' : undefined}
+              className={`rounded-2xl p-4 transition-all ${
+                isToday ? 'shadow-neu bg-background' : 'bg-background/50'
+              }`}
             >
               <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <span className={`
-                    text-lg font-bold font-mono-timer
-                    ${isToday ? 'text-primary' : 'text-foreground'}
-                  `}>
+                <div className="flex items-center gap-3">
+                  <span className={`text-2xl font-bold font-mono-timer ${isToday ? 'text-foreground' : 'text-muted-foreground'}`}>
                     {day}
                   </span>
                   <span className="text-xs text-muted-foreground">{dayName}</span>
                 </div>
                 {isToday && (
-                  <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full font-semibold">
-                    Hari Ini
+                  <span className="text-[10px] bg-foreground text-background px-3 py-1 rounded-full font-semibold">
+                    Today
                   </span>
                 )}
               </div>

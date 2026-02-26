@@ -12,95 +12,109 @@ interface CountdownTimerProps {
 export function CountdownTimer({ hours, minutes, seconds, label, targetTime, progress }: CountdownTimerProps) {
   const pad = (n: number) => String(n).padStart(2, '0');
 
-  // SVG circular progress
-  const size = 280;
-  const stroke = 8;
+  const size = 260;
+  const stroke = 6;
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - progress);
 
+  // Tick marks
+  const ticks = Array.from({ length: 60 }, (_, i) => {
+    const angle = (i * 6 - 90) * (Math.PI / 180);
+    const isMain = i % 5 === 0;
+    const outerR = radius + 2;
+    const innerR = radius - (isMain ? 10 : 5);
+    return {
+      x1: size / 2 + Math.cos(angle) * innerR,
+      y1: size / 2 + Math.sin(angle) * innerR,
+      x2: size / 2 + Math.cos(angle) * outerR,
+      y2: size / 2 + Math.sin(angle) * outerR,
+      isMain,
+    };
+  });
+
   return (
-    <div className="flex flex-col items-center gap-4">
-      {/* Label */}
-      <motion.p
-        key={label}
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-sm font-semibold tracking-widest uppercase text-primary"
-      >
-        {label}
-      </motion.p>
+    <div className="flex flex-col items-center gap-3">
+      <p className="text-xs font-medium tracking-[0.2em] uppercase text-muted-foreground">
+        Countdown
+      </p>
 
-      {/* Circular countdown */}
       <div className="relative flex items-center justify-center">
-        {/* Glow effect */}
-        <div className="absolute inset-0 rounded-full bg-primary/10 blur-2xl animate-pulse-glow" />
+        {/* Neumorphic circle bg */}
+        <div
+          className="absolute rounded-full shadow-neu"
+          style={{ width: size + 30, height: size + 30 }}
+        />
 
-        <svg width={size} height={size} className="transform -rotate-90">
-          {/* Background circle */}
+        <svg width={size} height={size} className="relative z-10">
+          {/* Tick marks */}
+          {ticks.map((t, i) => (
+            <line
+              key={i}
+              x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2}
+              stroke="hsl(var(--muted-foreground))"
+              strokeWidth={t.isMain ? 1.5 : 0.5}
+              opacity={t.isMain ? 0.5 : 0.25}
+            />
+          ))}
+
+          {/* Background track */}
           <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
+            cx={size / 2} cy={size / 2} r={radius - 15}
             fill="none"
-            stroke="hsl(var(--muted))"
+            stroke="hsl(var(--border))"
             strokeWidth={stroke}
           />
-          {/* Progress circle */}
+          {/* Progress */}
           <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
+            cx={size / 2} cy={size / 2} r={radius - 15}
             fill="none"
-            stroke="hsl(var(--primary))"
+            stroke="hsl(var(--foreground))"
             strokeWidth={stroke}
             strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
+            strokeDasharray={2 * Math.PI * (radius - 15)}
+            strokeDashoffset={2 * Math.PI * (radius - 15) * (1 - progress)}
             className="transition-all duration-1000 ease-linear"
+            transform={`rotate(-90 ${size / 2} ${size / 2})`}
           />
         </svg>
 
-        {/* Timer digits */}
-        <div className="absolute flex flex-col items-center">
-          <div className="flex items-baseline gap-1 font-mono-timer">
+        {/* Center content */}
+        <div className="absolute z-20 flex flex-col items-center">
+          {/* Small icon */}
+          <svg width="16" height="16" viewBox="0 0 24 24" className="text-foreground/40 mb-2">
+            <path
+              d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.7 0 3.3-.4 4.7-1.1C13.5 19.3 11 16 11 12s2.5-7.3 5.7-8.9C15.3 2.4 13.7 2 12 2z"
+              fill="currentColor"
+            />
+          </svg>
+
+          <div className="flex items-baseline font-mono-timer">
             <motion.span
               key={`h-${hours}`}
-              initial={{ opacity: 0.5, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-5xl font-bold text-foreground tabular-nums"
+              initial={{ opacity: 0.6 }}
+              animate={{ opacity: 1 }}
+              className="text-4xl font-bold text-foreground tabular-nums"
             >
-              {pad(hours)}
-            </motion.span>
-            <span className="text-3xl text-primary animate-pulse">:</span>
-            <motion.span
-              key={`m-${minutes}`}
-              initial={{ opacity: 0.5, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-5xl font-bold text-foreground tabular-nums"
-            >
-              {pad(minutes)}
-            </motion.span>
-            <span className="text-3xl text-primary animate-pulse">:</span>
-            <motion.span
-              key={`s-${seconds}`}
-              initial={{ opacity: 0.5, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-5xl font-bold text-foreground tabular-nums"
-            >
-              {pad(seconds)}
+              {pad(hours)}:{pad(minutes)}
             </motion.span>
           </div>
-          <div className="flex gap-8 mt-1 text-xs text-muted-foreground tracking-wider">
-            <span>Jam</span>
-            <span>Menit</span>
-            <span>Detik</span>
-          </div>
-          <p className="mt-2 text-xs text-muted-foreground">
-            Target: {targetTime}
+
+          <p className="text-[11px] text-muted-foreground mt-1">
+            {label === 'Menuju Maghrib' ? 'Mins Remaining for Iftar' : 'Mins Remaining for Sahur'}
           </p>
         </div>
       </div>
+
+      {/* Seconds indicator */}
+      <motion.p
+        key={seconds}
+        initial={{ opacity: 0.5 }}
+        animate={{ opacity: 1 }}
+        className="font-mono-timer text-lg text-muted-foreground tabular-nums"
+      >
+        :{pad(seconds)}
+      </motion.p>
     </div>
   );
 }
