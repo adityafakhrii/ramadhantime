@@ -6,16 +6,10 @@ export interface LocationData {
   city: string;
 }
 
-const DEFAULT_LOCATION: LocationData = {
-  latitude: -6.2088,
-  longitude: 106.8456,
-  city: 'Jakarta',
-};
-
 export function useLocation() {
-  const [location, setLocation] = useState<LocationData>(() => {
+  const [location, setLocation] = useState<LocationData | null>(() => {
     const saved = localStorage.getItem('ramadhan-location');
-    return saved ? JSON.parse(saved) : DEFAULT_LOCATION;
+    return saved ? JSON.parse(saved) : null;
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +38,7 @@ export function useLocation() {
       setLocation(loc);
       localStorage.setItem('ramadhan-location', JSON.stringify(loc));
     } catch (err) {
-      setError('Tidak dapat mendeteksi lokasi. Menggunakan Jakarta.');
+      setError('Izin lokasi ditolak atau gagal. Silakan atur lokasi manual.');
       console.error('Geolocation error:', err);
     } finally {
       setLoading(false);
@@ -87,5 +81,10 @@ export function useLocation() {
     }
   }, [detectLocation]);
 
-  return { location, loading, error, detectLocation, setManualCity };
+  const setResolvedCity = useCallback((loc: LocationData) => {
+    setLocation(loc);
+    localStorage.setItem('ramadhan-location', JSON.stringify(loc));
+  }, []);
+
+  return { location, loading, error, detectLocation, setManualCity, setResolvedCity };
 }

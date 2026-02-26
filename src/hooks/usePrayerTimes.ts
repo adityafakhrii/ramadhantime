@@ -20,13 +20,18 @@ function getCacheKey(lat: number, lng: number, month: number, year: number) {
   return `ramadhan-prayer-${lat.toFixed(2)}-${lng.toFixed(2)}-${month}-${year}`;
 }
 
-export function usePrayerTimes(location: LocationData) {
+export function usePrayerTimes(location: LocationData | null) {
   const [todayTimes, setTodayTimes] = useState<PrayerTimesData | null>(null);
   const [monthlyTimes, setMonthlyTimes] = useState<MonthlyPrayerData>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchMonthly = useCallback(async () => {
+    if (!location) {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -87,7 +92,7 @@ export function usePrayerTimes(location: LocationData) {
     } finally {
       setLoading(false);
     }
-  }, [location.latitude, location.longitude]);
+  }, [location?.latitude, location?.longitude]);
 
   useEffect(() => {
     fetchMonthly();

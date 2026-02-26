@@ -92,9 +92,10 @@ export function useCountdown(prayerTimes: PrayerTimesData | null): CountdownStat
     // Only trigger once when countdown hits exactly 00:00:00
     if (state && state.hours === 0 && state.minutes === 0 && state.seconds === 0) {
       if ('Notification' in window && Notification.permission === 'granted') {
+        const isMaghrib = state.label.includes('Maghrib');
+        const notifKey = isMaghrib ? 'ramadhan-notif-iftar' : 'ramadhan-notif-sahur';
         // default enabled unless manually disabled
-        if (localStorage.getItem('ramadhan-notif') !== 'false') {
-          const isMaghrib = state.label.includes('Maghrib');
+        if (localStorage.getItem(notifKey) !== 'false') {
           new Notification(`Waktu ${isMaghrib ? 'Berbuka Puasa' : 'Imsak'} Telah Tiba!`, {
             body: isMaghrib
               ? 'Selamat berbuka puasa. Jangan lupa membaca doa berbuka.'

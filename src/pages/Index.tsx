@@ -15,14 +15,16 @@ import { BottomNav, type TabType } from '@/components/BottomNav';
 import { Switch } from '@/components/ui/switch';
 import { RealtimeClock } from '@/components/RealtimeClock';
 import { PWAPrompt } from '@/components/PWAPrompt';
+import { useNotifications } from '@/hooks/useNotifications';
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>('home');
   const { isDark, toggle: toggleTheme } = useTheme();
-  const { location, loading: locLoading, detectLocation, setManualCity } = useLocation();
+  const { location, loading: locLoading, detectLocation, setManualCity, setResolvedCity } = useLocation();
   const { todayTimes, monthlyTimes, loading: prayerLoading } = usePrayerTimes(location);
   const countdown = useCountdown(todayTimes);
+  const { iftarNotif, sahurNotif, toggleIftar, toggleSahur } = useNotifications();
 
   const handleSplashFinish = useCallback(() => setShowSplash(false), []);
 
@@ -33,7 +35,12 @@ const Index = () => {
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission().then((perm) => {
         if (perm === 'granted') {
-          localStorage.setItem('ramadhan-notif', 'true');
+          if (localStorage.getItem('ramadhan-notif-iftar') === null) {
+            localStorage.setItem('ramadhan-notif-iftar', 'true');
+          }
+          if (localStorage.getItem('ramadhan-notif-sahur') === null) {
+            localStorage.setItem('ramadhan-notif-sahur', 'true');
+          }
         }
       });
     }
@@ -82,12 +89,32 @@ const Index = () => {
                   </div>
                   <div className="flex items-center gap-1.5 mt-2 text-sm text-muted-foreground">
                     <MapPin className="w-3.5 h-3.5" />
-                    <span>{location.city}</span>
+                    <span>{location ? location.city : 'Lokasi Belum Diatur'}</span>
                   </div>
                 </header>
 
                 {isLoading ? (
                   <LoadingSkeleton />
+                ) : !location ? (
+                  <div className="px-5 mt-10">
+                    <div className="rounded-2xl shadow-neu p-8 bg-background flex flex-col items-center justify-center text-center space-y-4">
+                      <div className="p-4 bg-muted/50 rounded-full text-muted-foreground">
+                        <MapPin className="w-8 h-8" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-foreground">Lokasi Belum Diatur</h3>
+                        <p className="text-sm text-muted-foreground mt-2">
+                          Izinkan akses lokasi atau atur kota Anda secara manual untuk melihat jadwal Ramadhan.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setActiveTab('settings')}
+                        className="mt-2 px-6 py-2.5 rounded-xl bg-foreground text-background font-semibold text-sm hover:opacity-90 transition-opacity"
+                      >
+                        Atur Lokasi
+                      </button>
+                    </div>
+                  </div>
                 ) : (
                   <div className="px-5 space-y-5">
                     <RealtimeClock />
@@ -99,7 +126,7 @@ const Index = () => {
                           <svg width="16" height="16" viewBox="0 0 24 24" className="text-foreground">
                             <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.7 0 3.3-.4 4.7-1.1C13.5 19.3 11 16 11 12s2.5-7.3 5.7-8.9C15.3 2.4 13.7 2 12 2z" fill="currentColor" />
                           </svg>
-                          <Switch defaultChecked />
+                          <Switch checked={iftarNotif} onCheckedChange={toggleIftar} />
                         </div>
                         <p className="text-3xl font-bold font-mono-timer text-foreground">
                           {todayTimes?.Maghrib || '--:--'}
@@ -118,7 +145,7 @@ const Index = () => {
                           <svg width="14" height="14" viewBox="0 0 24 24" className="text-foreground">
                             <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.7 0 3.3-.4 4.7-1.1C13.5 19.3 11 16 11 12s2.5-7.3 5.7-8.9C15.3 2.4 13.7 2 12 2z" fill="currentColor" />
                           </svg>
-                          <Switch />
+                          <Switch checked={sahurNotif} onCheckedChange={toggleSahur} />
                         </div>
                         <p className="text-3xl font-bold font-mono-timer text-foreground">
                           {todayTimes?.Imsak || '--:--'}
@@ -154,7 +181,27 @@ const Index = () => {
                 className="pt-6"
               >
                 {/* Countdown Section */}
-                {countdown && !isLoading && (
+                {!location ? (
+                  <div className="px-5 mt-10">
+                    <div className="rounded-2xl shadow-neu p-8 bg-background flex flex-col items-center justify-center text-center space-y-4">
+                      <div className="p-4 bg-muted/50 rounded-full text-muted-foreground">
+                        <MapPin className="w-8 h-8" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-foreground">Lokasi Belum Diatur</h3>
+                        <p className="text-sm text-muted-foreground mt-2">
+                          Silakan atur lokasi Anda terlebih dahulu untuk melihat kalender jadwal puasa.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setActiveTab('settings')}
+                        className="mt-2 px-6 py-2.5 rounded-xl bg-foreground text-background font-semibold text-sm hover:opacity-90 transition-opacity"
+                      >
+                        Atur Lokasi
+                      </button>
+                    </div>
+                  </div>
+                ) : countdown && !isLoading ? (
                   <div className="px-5 mb-6">
                     <CountdownTimer
                       hours={countdown.hours}
@@ -178,16 +225,21 @@ const Index = () => {
                           <p className="text-[10px] text-muted-foreground">Isha</p>
                         </div>
                       </div>
-                      <div className="rounded-2xl shadow-neu-sm p-3 bg-background">
+                      <div className="rounded-2xl shadow-neu-sm p-3 bg-background flex flex-col justify-center">
                         <div className="flex items-center justify-between">
-                          <p className="text-xs text-muted-foreground">Iftar Alert</p>
-                          <Switch defaultChecked />
+                          <p className="text-xs text-muted-foreground">
+                            {countdown.label.includes('Maghrib') ? 'Iftar Alert' : 'Sahur Alert'}
+                          </p>
+                          <Switch
+                            checked={countdown.label.includes('Maghrib') ? iftarNotif : sahurNotif}
+                            onCheckedChange={countdown.label.includes('Maghrib') ? toggleIftar : toggleSahur}
+                          />
                         </div>
                       </div>
                     </div>
                   </div>
-                )}
-                <CalendarView monthlyTimes={monthlyTimes} />
+                ) : null}
+                {location && <CalendarView monthlyTimes={monthlyTimes} />}
               </motion.div>
             )}
 
@@ -203,9 +255,14 @@ const Index = () => {
                   isDark={isDark}
                   onToggleTheme={toggleTheme}
                   onSearchCity={setManualCity}
+                  onSelectCity={setResolvedCity}
                   onDetectLocation={detectLocation}
                   locationLoading={locLoading}
-                  cityName={location.city}
+                  cityName={location ? location.city : 'Belum diatur'}
+                  iftarNotif={iftarNotif}
+                  sahurNotif={sahurNotif}
+                  onToggleIftar={toggleIftar}
+                  onToggleSahur={toggleSahur}
                 />
               </motion.div>
             )}
