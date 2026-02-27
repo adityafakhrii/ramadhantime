@@ -1,8 +1,10 @@
 import { useHabits, type HabitType } from "@/hooks/useHabits";
-import { Check, CheckCircle2, PartyPopper } from "lucide-react";
+import { Check, CheckCircle2, PartyPopper, Share2, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import confetti from "canvas-confetti";
+import { toBlob } from "html-to-image";
+import { toast } from "sonner";
 
 const HABIT_CONFIG: { id: HabitType; label: string; icon: string }[] = [
     { id: 'puasa', label: 'Puasa Wajib', icon: '🌙' },
@@ -22,6 +24,54 @@ const getMotivationalQuote = (prog: number) => {
 export const HabitTracker = () => {
     const { habits, toggleHabit, progress } = useHabits();
     const [showCongrats, setShowCongrats] = useState(false);
+    const cardRef = useRef<HTMLDivElement>(null);
+    const [isSharing, setIsSharing] = useState(false);
+
+    const shareHabit = async () => {
+        if (!cardRef.current) return;
+        try {
+            setIsSharing(true);
+            toast.loading("Menyiapkan gambar...", { id: "share-habit" });
+
+            // Wait slightly for any animations to finish
+            await new Promise(res => setTimeout(res, 100));
+
+            const blob = await toBlob(cardRef.current, {
+                backgroundColor: window.getComputedStyle(document.body).backgroundColor,
+                style: { transform: 'scale(1)' }
+            });
+
+            if (!blob) throw new Error("Gagal rendering blob");
+
+            const file = new File([blob], `Ramadhan-Habit-${new Date().getTime()}.png`, { type: 'image/png' });
+
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                    title: 'Habit Ramadhanku',
+                    text: 'Alhamdulillah, progres ibadah Ramadhan saya hari ini! Ayo semangat juga kawan-kawan 🌙✨ #RamadhanTime',
+                    files: [file]
+                });
+                toast.success("Berhasil dibuka di menu Share!", { id: "share-habit" });
+            } else {
+                // Fallback to download
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.name;
+                a.click();
+                URL.revokeObjectURL(url);
+                toast.success("Gambar berhasil disimpan! (Browser tidak support Share API langsung)", { id: "share-habit" });
+            }
+        } catch (error: unknown) {
+            console.error(error);
+            const errName = typeof error === 'object' && error !== null && 'name' in error ? (error as Error).name : '';
+            if (errName !== 'AbortError') {
+                toast.error("Gagal membagikan gambar", { id: "share-habit" });
+            }
+        } finally {
+            setIsSharing(false);
+        }
+    };
 
     useEffect(() => {
         if (progress === 100) {
@@ -57,13 +107,25 @@ export const HabitTracker = () => {
 
     return (
         <div className="px-5 mb-5 mt-2">
-            <div className="rounded-2xl shadow-neu p-5 bg-background border border-border/50">
+            <div ref={cardRef} className="rounded-2xl shadow-neu p-5 bg-background border border-border/50">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2 text-foreground font-bold">
                         <CheckCircle2 className="w-5 h-5 text-primary" />
-                        <h3 className="text-lg">Habit Tracker Ramadhan</h3>
+                        <h3 className="text-lg">Habit Tracker</h3>
                     </div>
-                    <span className="text-sm font-semibold text-primary">{progress}%</span>
+                    <div className="flex items-center gap-2">
+                        {progress > 0 && (
+                            <button
+                                onClick={shareHabit}
+                                disabled={isSharing}
+                                className="p-1.5 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
+                                title="Pamer Kebaikan"
+                            >
+                                {isSharing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
+                            </button>
+                        )}
+                        <span className="text-sm font-semibold text-primary">{progress}%</span>
+                    </div>
                 </div>
 
                 {/* Progress Bar */}
