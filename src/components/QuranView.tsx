@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Book, ChevronLeft, Loader2, PlayCircle, Bookmark } from 'lucide-react';
+import { Book, ChevronLeft, Loader2, PlayCircle, Bookmark, Maximize2, Minimize2, Play, Pause } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface Surah {
@@ -35,6 +35,11 @@ export const QuranView = () => {
     const [detailLoading, setDetailLoading] = useState(false);
 
     const [lastRead, setLastRead] = useState<{ surah: number; ayat: number; nama: string } | null>(null);
+
+    // Focus & Auto-Scroll states
+    const [isFocusMode, setIsFocusMode] = useState(false);
+    const [isAutoScrolling, setIsAutoScrolling] = useState(false);
+    const contentRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         // Load last read
@@ -91,8 +96,26 @@ export const QuranView = () => {
         audio.play().catch(e => console.error(e));
     };
 
+    useEffect(() => {
+        if (!isAutoScrolling || !contentRef.current) return;
+
+        const interval = setInterval(() => {
+            if (contentRef.current) {
+                // Scroll down by 1 pixel every 50ms
+                contentRef.current.scrollBy({ top: 1, left: 0, behavior: 'auto' });
+            }
+        }, 50);
+
+        return () => clearInterval(interval);
+    }, [isAutoScrolling]);
+
+    // Derived classes for Focus Mode
+    const containerClass = isFocusMode
+        ? "fixed inset-0 z-50 bg-background flex flex-col pt-8 pb-4 px-4"
+        : "pt-6 px-4 pb-24 h-[calc(100vh-5rem)]";
+
     return (
-        <div className="pt-6 px-4 pb-24 h-[calc(100vh-5rem)]">
+        <div className={containerClass}>
             <AnimatePresence mode="wait">
                 {!selectedSurah ? (
                     <motion.div
@@ -172,17 +195,28 @@ export const QuranView = () => {
                         className="h-full flex flex-col"
                     >
                         <div className="flex items-center gap-4 mb-4">
-                            <button
-                                onClick={handleBack}
-                                className="p-2 bg-background border border-border hover:bg-muted rounded-xl transition-colors"
-                                title="Kembali ke Daftar Surat"
-                            >
-                                <ChevronLeft className="w-5 h-5" />
-                            </button>
+                            {!isFocusMode && (
+                                <button
+                                    onClick={handleBack}
+                                    className="p-2 bg-background border border-border hover:bg-muted rounded-xl transition-colors shrink-0"
+                                    title="Kembali ke Daftar Surat"
+                                >
+                                    <ChevronLeft className="w-5 h-5" />
+                                </button>
+                            )}
                             {surahDetail ? (
-                                <div className="flex-1">
-                                    <h2 className="text-lg font-bold text-foreground">QS. {surahDetail.namaLatin}</h2>
-                                    <p className="text-xs text-muted-foreground">{surahDetail.arti} • {surahDetail.jumlahAyat} Ayat</p>
+                                <div className="flex-1 flex justify-between items-center">
+                                    <div>
+                                        <h2 className="text-lg font-bold text-foreground">QS. {surahDetail.namaLatin}</h2>
+                                        <p className="text-xs text-muted-foreground">{surahDetail.arti} • {surahDetail.jumlahAyat} Ayat</p>
+                                    </div>
+                                    <button
+                                        onClick={() => setIsFocusMode(!isFocusMode)}
+                                        className="p-2 bg-primary/10 text-primary rounded-xl hover:bg-primary/20 transition-colors shrink-0"
+                                        title={isFocusMode ? "Keluar Mode Khusyuk" : "Mode Khusyuk (Layar Penuh)"}
+                                    >
+                                        {isFocusMode ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+                                    </button>
                                 </div>
                             ) : (
                                 <div className="h-4 w-32 bg-muted animate-pulse rounded flex-1" />
@@ -220,14 +254,14 @@ export const QuranView = () => {
                             </div>
                         )}
 
-                        <div className="flex-1 overflow-hidden rounded-2xl bg-background border border-border/50">
-                            <ScrollArea className="h-full p-4">
-                                {detailLoading || !surahDetail ? (
-                                    <div className="flex justify-center items-center h-40">
-                                        <Loader2 className="w-8 h-8 text-primary animate-spin" />
-                                    </div>
-                                ) : (
-                                    <div className="space-y-8 pb-10">
+                        <div className="flex-1 overflow-hidden rounded-2xl bg-background border border-border/50 relative">
+                            {detailLoading || !surahDetail ? (
+                                <div className="flex justify-center items-center h-full">
+                                    <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                                </div>
+                            ) : (
+                                <div ref={contentRef} className="h-full overflow-y-auto p-4 scroll-smooth">
+                                    <div className="space-y-8 pb-32">
                                         {surahDetail.nomor !== 1 && surahDetail.nomor !== 9 && (
                                             <div className="text-center py-4 text-3xl font-arabic text-foreground">
                                                 بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ
@@ -268,8 +302,20 @@ export const QuranView = () => {
                                             </div>
                                         ))}
                                     </div>
-                                )}
-                            </ScrollArea>
+
+                                    {/* Auto-Scroll FAB */}
+                                    {isFocusMode && (
+                                        <div className="fixed bottom-6 right-6 z-50">
+                                            <button
+                                                onClick={() => setIsAutoScrolling(!isAutoScrolling)}
+                                                className={`p-4 rounded-full shadow-neu text-white transition-all flex items-center gap-2 ${isAutoScrolling ? 'bg-red-500 hover:bg-red-600' : 'bg-primary hover:bg-primary/90'}`}
+                                            >
+                                                {isAutoScrolling ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </motion.div>
                 )}
