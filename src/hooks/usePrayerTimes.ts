@@ -41,6 +41,25 @@ export function usePrayerTimes(location: LocationData | null) {
     const year = now.getFullYear();
     const cacheKey = getCacheKey(location.latitude, location.longitude, year);
 
+    // 1. Cek Offline Cache First
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      try {
+        const monthly = JSON.parse(cached) as MonthlyPrayerData;
+        setMonthlyTimes(monthly);
+        const todayStr = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${year}`;
+        if (monthly[todayStr]) {
+          setTodayTimes(monthly[todayStr]);
+        }
+        setLoading(false);
+        // Data is static for the year based on location, so we don't need to refetch if cached.
+        return;
+      } catch (e) {
+        console.error("Cache corrupted, fetching fresh data", e);
+      }
+    }
+
+    // 2. Jika tidak ada cache, fetch ke API eksternal
     try {
       const res = await fetch(
         `https://api.aladhan.com/v1/calendar/${year}?latitude=${location.latitude}&longitude=${location.longitude}&method=20&tune=2,0,0,0,0,0,0,0,0`
