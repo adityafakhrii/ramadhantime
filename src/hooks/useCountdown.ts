@@ -94,11 +94,17 @@ export function useCountdown(prayerTimes: PrayerTimesData | null, timezone?: str
   useEffect(() => {
     // Only trigger once when countdown hits exactly 00:00:00
     if (state && state.hours === 0 && state.minutes === 0 && state.seconds === 0) {
-      if ('Notification' in window && Notification.permission === 'granted') {
-        const isMaghrib = state.label.includes('Buka');
-        const notifKey = isMaghrib ? 'ramadhan-notif-iftar' : 'ramadhan-notif-sahur';
-        // default enabled unless manually disabled
-        if (localStorage.getItem(notifKey) !== 'false') {
+      const isMaghrib = state.label.includes('Buka');
+      const notifKey = isMaghrib ? 'ramadhan-notif-iftar' : 'ramadhan-notif-sahur';
+      const isEnabled = localStorage.getItem(notifKey) !== 'false';
+
+      if (isEnabled) {
+        // Play Audio Azan/Alert
+        const audio = new Audio('/azan.ogg');
+        audio.play().catch(e => console.warn('Pemuatan audio ditolak oleh browser autoplay policy:', e));
+
+        // Show OS Notification
+        if ('Notification' in window && Notification.permission === 'granted') {
           new Notification(isMaghrib ? 'Woy Buka Puasa Tiba!' : 'Udah Subuh Cuy!', {
             body: isMaghrib
               ? 'Gasskeun minum yang manis-manis. Jangan lupa doa bang.'
