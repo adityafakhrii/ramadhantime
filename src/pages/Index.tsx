@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { MapPin, Sunset, Moon } from 'lucide-react';
+import { MapPin, Sunset, Moon, Compass, Calculator, Map } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/hooks/useTheme';
 import { useLocation } from '@/hooks/useLocation';
@@ -16,20 +16,54 @@ import { Switch } from '@/components/ui/switch';
 import { RealtimeClock } from '@/components/RealtimeClock';
 import { DoaView } from '@/components/DoaView';
 import { QuranView } from '@/components/QuranView';
+import { ZakatView } from '@/components/ZakatView';
+import { QiblaView } from '@/components/QiblaView';
 import { PWAPrompt } from '@/components/PWAPrompt';
 import { DailyQuote } from '@/components/DailyQuote';
 import { HabitTracker } from '@/components/HabitTracker';
 import { useNotifications } from '@/hooks/useNotifications';
 import { usePWA } from '@/hooks/usePWA';
 import { toast } from 'sonner';
+import type { PrayerTimesData } from '@/hooks/usePrayerTimes';
+import { getZonedTime } from '@/lib/time';
+
+// Helper function to find the next actual prayer visually
+const getNextPrayer = (times: PrayerTimesData | null, timezone?: string) => {
+  if (!times) return { name: 'Imsak', time: '--:--' };
+
+  const { h, m } = getZonedTime(new Date(), timezone);
+  const currentMin = h * 60 + m;
+
+  const schedule = [
+    { name: 'Imsak', key: 'Imsak' },
+    { name: 'Subuh', key: 'Fajr' },
+    { name: 'Dzuhur', key: 'Dhuhr' },
+    { name: 'Ashar', key: 'Asr' },
+    { name: 'Maghrib', key: 'Maghrib' },
+    { name: 'Isya', key: 'Isha' }
+  ] as const;
+
+  for (const prayer of schedule) {
+    const timeStr = times[prayer.key as keyof PrayerTimesData];
+    if (typeof timeStr === 'string') {
+      const [h, m] = timeStr.split(':').map(Number);
+      if (h * 60 + m > currentMin) {
+        return { name: prayer.name, time: timeStr };
+      }
+    }
+  }
+  return { name: 'Imsak', time: times.Imsak };
+};
+
+export type ExtendedTabType = TabType | 'qibla' | 'zakat';
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
-  const [activeTab, setActiveTab] = useState<TabType>('home');
+  const [activeTab, setActiveTab] = useState<ExtendedTabType>('home');
   const { isDark, toggle: toggleTheme } = useTheme();
   const { location, loading: locLoading, detectLocation, setManualCity, setResolvedCity } = useLocation();
   const { todayTimes, monthlyTimes, loading: prayerLoading } = usePrayerTimes(location);
-  const countdown = useCountdown(todayTimes);
+  const countdown = useCountdown(todayTimes, location?.timezone);
   const { iftarNotif, sahurNotif, toggleIftar, toggleSahur } = useNotifications();
   const { isInstallable, promptInstall } = usePWA();
 
@@ -193,7 +227,7 @@ const Index = () => {
                 ) : (
                   <>
                     <div className="px-5 space-y-5">
-                      <RealtimeClock />
+                      <RealtimeClock timezone={location.timezone} />
                       {/* Main Layout: Alert Column & Prayer List Column */}
                       <div className="grid grid-cols-2 gap-3">
 
@@ -230,8 +264,33 @@ const Index = () => {
 
                         {/* Prayer List Card Column */}
                         <div className="flex flex-col">
-                          {todayTimes && <PrayerSchedule times={todayTimes} />}
+                          {todayTimes && <PrayerSchedule times={todayTimes} timezone={location?.timezone} />}
                         </div>
+                      </div>
+
+                      {/* Quick Actions / Fitur Lainnya */}
+                      <div className="grid grid-cols-3 gap-3">
+                        <button
+                          onClick={() => setActiveTab('qibla')}
+                          className="flex flex-col items-center justify-center p-3 rounded-2xl bg-background shadow-neu-sm hover:opacity-80 transition-opacity"
+                        >
+                          <Compass className="w-6 h-6 text-primary mb-2" />
+                          <span className="text-xs font-semibold text-foreground">Arah Kiblat</span>
+                        </button>
+                        <button
+                          onClick={() => setActiveTab('zakat')}
+                          className="flex flex-col items-center justify-center p-3 rounded-2xl bg-background shadow-neu-sm hover:opacity-80 transition-opacity"
+                        >
+                          <Calculator className="w-6 h-6 text-primary mb-2" />
+                          <span className="text-xs font-semibold text-foreground">Zakat</span>
+                        </button>
+                        <button
+                          onClick={() => window.open('https://www.google.com/maps/search/masjid+terdekat/', '_blank')}
+                          className="flex flex-col items-center justify-center p-3 rounded-2xl bg-background shadow-neu-sm hover:opacity-80 transition-opacity"
+                        >
+                          <Map className="w-6 h-6 text-primary mb-2" />
+                          <span className="text-xs font-semibold text-foreground">Masjid</span>
+                        </button>
                       </div>
 
                       {/* Greeting */}
@@ -287,30 +346,35 @@ const Index = () => {
                     />
 
                     {/* Info row */}
-                    <div className="grid grid-cols-2 gap-3 mt-5">
-                      <div className="rounded-2xl shadow-neu-sm p-3 bg-background flex items-center gap-3">
-                        <svg width="14" height="14" viewBox="0 0 24 24" className="text-foreground/50">
-                          <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.7 0 3.3-.4 4.7-1.1C13.5 19.3 11 16 11 12s2.5-7.3 5.7-8.9C15.3 2.4 13.7 2 12 2z" fill="currentColor" />
-                        </svg>
-                        <div>
-                          <p className="text-sm font-bold text-foreground">
-                            {todayTimes?.Isha || '--:--'}
-                          </p>
-                          <p className="text-[10px] text-muted-foreground">Isha</p>
+                    {(() => {
+                      const nextP = getNextPrayer(todayTimes, location?.timezone);
+                      return (
+                        <div className="grid grid-cols-2 gap-3 mt-5">
+                          <div className="rounded-2xl shadow-neu-sm p-3 bg-background flex items-center gap-3">
+                            <svg width="14" height="14" viewBox="0 0 24 24" className="text-foreground/50">
+                              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.7 0 3.3-.4 4.7-1.1C13.5 19.3 11 16 11 12s2.5-7.3 5.7-8.9C15.3 2.4 13.7 2 12 2z" fill="currentColor" />
+                            </svg>
+                            <div>
+                              <p className="text-sm font-bold text-foreground">
+                                {nextP.time}
+                              </p>
+                              <p className="text-[10px] text-muted-foreground">Selanjutnya: {nextP.name}</p>
+                            </div>
+                          </div>
+                          <div className="rounded-2xl shadow-neu-sm p-3 bg-background flex flex-col justify-center">
+                            <div className="flex items-center justify-between">
+                              <p className="text-xs text-muted-foreground">
+                                {countdown.label.includes('Buka') ? 'Alarm Buka' : 'Alarm Sahur'}
+                              </p>
+                              <Switch
+                                checked={countdown.label.includes('Buka') ? iftarNotif : sahurNotif}
+                                onCheckedChange={countdown.label.includes('Buka') ? toggleIftar : toggleSahur}
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="rounded-2xl shadow-neu-sm p-3 bg-background flex flex-col justify-center">
-                        <div className="flex items-center justify-between">
-                          <p className="text-xs text-muted-foreground">
-                            {countdown.label.includes('Buka') ? 'Alarm Buka' : 'Alarm Sahur'}
-                          </p>
-                          <Switch
-                            checked={countdown.label.includes('Buka') ? iftarNotif : sahurNotif}
-                            onCheckedChange={countdown.label.includes('Buka') ? toggleIftar : toggleSahur}
-                          />
-                        </div>
-                      </div>
-                    </div>
+                      );
+                    })()}
                   </div>
                 ) : null}
                 {location && <CalendarView monthlyTimes={monthlyTimes} />}
@@ -350,10 +414,18 @@ const Index = () => {
                 />
               </motion.div>
             )}
+
+            {activeTab === 'qibla' && (
+              <QiblaView key="qibla" onBack={() => setActiveTab('home')} />
+            )}
+
+            {activeTab === 'zakat' && (
+              <ZakatView key="zakat" onBack={() => setActiveTab('home')} />
+            )}
           </AnimatePresence>
         </div>
 
-        <BottomNav active={activeTab} onChange={setActiveTab} />
+        <BottomNav active={activeTab as TabType} onChange={setActiveTab as (tab: TabType) => void} />
       </div>
     </>
   );

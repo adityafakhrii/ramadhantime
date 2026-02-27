@@ -15,7 +15,7 @@ interface SettingsViewProps {
   sahurNotif: boolean;
   onToggleIftar: (val: boolean) => void;
   onToggleSahur: (val: boolean) => void;
-  onSelectCity: (loc: { latitude: number; longitude: number; city: string }) => void;
+  onSelectCity: (loc: { latitude: number; longitude: number; city: string; timezone?: string }) => void;
   isInstallable: boolean;
   onInstallApp: () => void;
 }
@@ -198,6 +198,7 @@ export function SettingsView({
                             latitude: s.latitude,
                             longitude: s.longitude,
                             city: s.name,
+                            timezone: s.timezone,
                           });
                           setSearchQuery('');
                           setShowDropdown(false);

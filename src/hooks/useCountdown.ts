@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import type { PrayerTimesData } from './usePrayerTimes';
+import { getZonedTime, getZonedDate } from '@/lib/time';
 
 interface CountdownState {
   hours: number;
@@ -16,19 +17,7 @@ function timeToMinutes(timeStr: string): number {
   return h * 60 + m;
 }
 
-function nowMinutes(): number {
-  const now = new Date();
-  return now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
-}
-
-function timeToDate(timeStr: string): Date {
-  const [h, m] = timeStr.split(':').map(Number);
-  const d = new Date();
-  d.setHours(h, m, 0, 0);
-  return d;
-}
-
-export function useCountdown(prayerTimes: PrayerTimesData | null): CountdownState | null {
+export function useCountdown(prayerTimes: PrayerTimesData | null, timezone?: string): CountdownState | null {
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
@@ -39,11 +28,21 @@ export function useCountdown(prayerTimes: PrayerTimesData | null): CountdownStat
   const state = useMemo(() => {
     if (!prayerTimes) return null;
 
-    const currentMin = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+    const zonedNow = getZonedDate(now, timezone);
+    const { h, m, s } = getZonedTime(now, timezone);
+    const currentMin = h * 60 + m + s / 60;
+
     const maghribMin = timeToMinutes(prayerTimes.Maghrib);
     const imsakMin = timeToMinutes(prayerTimes.Imsak);
     const ishaMin = timeToMinutes(prayerTimes.Isha);
     const fajrMin = timeToMinutes(prayerTimes.Fajr);
+
+    function timeToZonedDate(timeStr: string): Date {
+      const [th, tm] = timeStr.split(':').map(Number);
+      const d = new Date(zonedNow);
+      d.setHours(th, tm, 0, 0);
+      return d;
+    }
 
     let targetDate: Date;
     let label: string;
@@ -52,13 +51,13 @@ export function useCountdown(prayerTimes: PrayerTimesData | null): CountdownStat
 
     if (currentMin < maghribMin && currentMin >= fajrMin) {
       // After Subuh, before Maghrib → countdown to Maghrib (Iftar)
-      targetDate = timeToDate(prayerTimes.Maghrib);
+      targetDate = timeToZonedDate(prayerTimes.Maghrib);
       label = "Menuju Buka Pe-we"; // Casual Iftar
       periodStart = fajrMin;
       periodEnd = maghribMin;
     } else {
       // After Maghrib or before Subuh → countdown to Subuh (End of Sahur)
-      targetDate = timeToDate(prayerTimes.Fajr);
+      targetDate = timeToZonedDate(prayerTimes.Fajr);
       if (currentMin > fajrMin) {
         targetDate.setDate(targetDate.getDate() + 1);
       }
@@ -67,7 +66,7 @@ export function useCountdown(prayerTimes: PrayerTimesData | null): CountdownStat
       periodEnd = fajrMin + (fajrMin < maghribMin ? 24 * 60 : 0);
     }
 
-    const diff = targetDate.getTime() - now.getTime();
+    const diff = targetDate.getTime() - zonedNow.getTime();
     const totalSeconds = Math.max(0, Math.floor(diff / 1000));
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);

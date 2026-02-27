@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion';
 import type { PrayerTimesData } from '@/hooks/usePrayerTimes';
+import { getZonedTime } from '@/lib/time';
 
 interface PrayerScheduleProps {
   times: PrayerTimesData;
+  timezone?: string;
 }
 
 const PRAYER_LABELS: { key: keyof PrayerTimesData; label: string }[] = [
@@ -14,19 +16,19 @@ const PRAYER_LABELS: { key: keyof PrayerTimesData; label: string }[] = [
   { key: 'Isha', label: 'Isya' },
 ];
 
-function getNextPrayer(times: PrayerTimesData): string | null {
-  const now = new Date();
-  const currentMin = now.getHours() * 60 + now.getMinutes();
+function getNextPrayer(times: PrayerTimesData, timezone?: string): string | null {
+  const { h, m } = getZonedTime(new Date(), timezone);
+  const currentMin = h * 60 + m;
 
   for (const p of PRAYER_LABELS) {
-    const [h, m] = (times[p.key] as string).split(':').map(Number);
-    if (h * 60 + m > currentMin) return p.key;
+    const [th, tm] = (times[p.key] as string).split(':').map(Number);
+    if (th * 60 + tm > currentMin) return p.key;
   }
   return null;
 }
 
-export function PrayerSchedule({ times }: PrayerScheduleProps) {
-  const nextPrayer = getNextPrayer(times);
+export function PrayerSchedule({ times, timezone }: PrayerScheduleProps) {
+  const nextPrayer = getNextPrayer(times, timezone);
 
   return (
     <div className="rounded-2xl shadow-neu p-5 bg-background">

@@ -4,6 +4,7 @@ export interface LocationData {
   latitude: number;
   longitude: number;
   city: string;
+  timezone?: string; // e.g. "Asia/Jakarta"
 }
 
 export function useLocation() {
@@ -34,7 +35,20 @@ export function useLocation() {
       const data = await res.json();
       const city = data.city || data.locality || data.principalSubdivision || 'Unknown';
 
-      const loc: LocationData = { latitude, longitude, city };
+      // Attempt to guess timezone from system if using GPS, because GPS means local.
+      // But it's safer to just fetch it based on coords to be 100% accurate.
+      let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      try {
+        const tzRes = await fetch(`https://timeapi.io/api/TimeZone/coordinate?latitude=${latitude}&longitude=${longitude}`);
+        if (tzRes.ok) {
+          const tzData = await tzRes.json();
+          if (tzData.timeZone) tz = tzData.timeZone;
+        }
+      } catch (e) {
+        console.error("Failed to fetch timezone by coord", e);
+      }
+
+      const loc: LocationData = { latitude, longitude, city, timezone: tz };
       setLocation(loc);
       localStorage.setItem('ramadhan-location', JSON.stringify(loc));
     } catch (err) {
@@ -49,17 +63,30 @@ export function useLocation() {
     setLoading(true);
     setError(null);
     try {
-      // Use geocoding to find coords
+      // Use geocoding to find coords, now including timezone
       const res = await fetch(
         `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=id`
       );
       const data = await res.json();
       if (data.results && data.results.length > 0) {
         const r = data.results[0];
+
+        let tz = r.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+        try {
+          const tzRes = await fetch(`https://timeapi.io/api/TimeZone/coordinate?latitude=${r.latitude}&longitude=${r.longitude}`);
+          if (tzRes.ok) {
+            const tzData = await tzRes.json();
+            if (tzData.timeZone) tz = tzData.timeZone;
+          }
+        } catch (e) {
+          console.error("Failed to fetch timezone by coord", e);
+        }
+
         const loc: LocationData = {
           latitude: r.latitude,
           longitude: r.longitude,
           city: r.name,
+          timezone: tz, // explicitly resolved
         };
         setLocation(loc);
         localStorage.setItem('ramadhan-location', JSON.stringify(loc));

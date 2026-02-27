@@ -190,22 +190,31 @@ export const QuranView = () => {
                         {/* Surah Navigation */}
                         {surahDetail && (
                             <div className="flex items-center justify-between mb-4 gap-3">
-                                <button
-                                    onClick={() => handleSelectSurah(surahDetail.nomor - 1)}
-                                    disabled={surahDetail.nomor === 1}
-                                    className="flex-1 p-2 bg-background border border-border/50 hover:bg-muted rounded-xl text-xs font-semibold disabled:opacity-50 transition-colors flex items-center justify-center gap-1 text-muted-foreground"
-                                >
-                                    <ChevronLeft className="w-4 h-4" />
-                                    Sebelumnya
-                                </button>
-                                <button
-                                    onClick={() => handleSelectSurah(surahDetail.nomor + 1)}
-                                    disabled={surahDetail.nomor === 114}
-                                    className="flex-1 p-2 bg-background border border-border/50 hover:bg-muted rounded-xl text-xs font-semibold disabled:opacity-50 transition-colors flex items-center justify-center gap-1 text-muted-foreground"
-                                >
-                                    Selanjutnya
-                                    <ChevronLeft className="w-4 h-4 rotate-180" />
-                                </button>
+                                {surahDetail.nomor > 1 ? (
+                                    <button
+                                        onClick={() => handleSelectSurah(surahDetail.nomor - 1)}
+                                        className="flex-1 p-2 bg-background border border-border/50 hover:bg-muted rounded-xl text-xs font-semibold transition-colors flex flex-col items-center justify-center gap-0.5 text-muted-foreground"
+                                    >
+                                        <div className="flex items-center gap-1">
+                                            <ChevronLeft className="w-4 h-4" />
+                                            Sebelumnya
+                                        </div>
+                                        <span className="text-[10px] font-normal opacity-80">QS. {surahs.find(s => s.nomor === surahDetail.nomor - 1)?.namaLatin}</span>
+                                    </button>
+                                ) : <div className="flex-1" />}
+
+                                {surahDetail.nomor < 114 ? (
+                                    <button
+                                        onClick={() => handleSelectSurah(surahDetail.nomor + 1)}
+                                        className="flex-1 p-2 bg-background border border-border/50 hover:bg-muted rounded-xl text-xs font-semibold transition-colors flex flex-col items-center justify-center gap-0.5 text-muted-foreground"
+                                    >
+                                        <div className="flex items-center gap-1">
+                                            Selanjutnya
+                                            <ChevronLeft className="w-4 h-4 rotate-180" />
+                                        </div>
+                                        <span className="text-[10px] font-normal opacity-80">QS. {surahs.find(s => s.nomor === surahDetail.nomor + 1)?.namaLatin}</span>
+                                    </button>
+                                ) : <div className="flex-1" />}
                             </div>
                         )}
 

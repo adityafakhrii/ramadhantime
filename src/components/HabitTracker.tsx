@@ -12,6 +12,13 @@ const HABIT_CONFIG: { id: HabitType; label: string; icon: string }[] = [
     { id: 'sedekah', label: 'Sedekah/Infaq', icon: '🤲' },
 ];
 
+const getMotivationalQuote = (prog: number) => {
+    if (prog === 0) return "Yuk mulai cicil ibadah pertamamu hari ini!";
+    if (prog <= 40) return "Awal yang bagus, gas terus jangan kendor!";
+    if (prog <= 80) return "Sedikit lagi nih, semangat ngejar target harian!";
+    return "Masya Allah, ibadah lu hari ini murni 100%! Pertahankan besok ya.";
+};
+
 export const HabitTracker = () => {
     const { habits, toggleHabit, progress } = useHabits();
     const [showCongrats, setShowCongrats] = useState(false);
@@ -60,13 +67,43 @@ export const HabitTracker = () => {
                 </div>
 
                 {/* Progress Bar */}
-                <div className="h-2 w-full bg-muted/30 rounded-full overflow-hidden mb-5">
+                <div className="h-2 w-full bg-muted/30 rounded-full overflow-hidden mb-3">
                     <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${progress}%` }}
                         transition={{ duration: 0.5, ease: "easeOut" }}
                         className="h-full bg-primary"
                     />
+                </div>
+
+                {/* Motivational Quote & Congrats Box */}
+                <div className="mb-5">
+                    <AnimatePresence mode="wait">
+                        {progress < 100 ? (
+                            <motion.p
+                                key="quote"
+                                initial={{ opacity: 0, y: -5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -5 }}
+                                className="text-xs text-muted-foreground italic"
+                            >
+                                "{getMotivationalQuote(progress)}"
+                            </motion.p>
+                        ) : (
+                            <motion.div
+                                key="congrats"
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="overflow-hidden"
+                            >
+                                <div className="bg-primary/10 border border-primary/20 rounded-xl p-3 flex items-center justify-center gap-2 text-primary font-medium text-sm text-center">
+                                    <PartyPopper className="w-5 h-5 shrink-0" />
+                                    <span>{getMotivationalQuote(progress)}</span>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
                 {/* Habit List */}
@@ -79,7 +116,7 @@ export const HabitTracker = () => {
                                 onClick={() => toggleHabit(item.id)}
                                 className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 border 
                   ${isCompleted
-                                        ? 'bg-primary/5 border-primary shadow-sm text-foreground'
+                                        ? 'bg-primary/5 border-primary/50 shadow-sm text-foreground'
                                         : 'bg-muted/10 border-transparent hover:bg-muted/20 text-muted-foreground'
                                     }`}
                             >
@@ -103,23 +140,7 @@ export const HabitTracker = () => {
                     })}
                 </div>
 
-                <AnimatePresence>
-                    {showCongrats && (
-                        <motion.div
-                            initial={{ height: 0, opacity: 0, marginTop: 0 }}
-                            animate={{ height: 'auto', opacity: 1, marginTop: 16 }}
-                            exit={{ height: 0, opacity: 0, marginTop: 0 }}
-                            className="overflow-hidden"
-                        >
-                            <div className="bg-primary/10 border border-primary/20 rounded-xl p-3 flex items-center justify-center gap-2 text-primary font-medium text-sm text-center">
-                                <PartyPopper className="w-5 h-5" />
-                                <span>Masya Allah, ibadah lu hari ini murni 100%! Pertahankan besok ya.</span>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                <p className="text-[10px] text-muted-foreground text-center mt-4">
+                <p className="text-[10px] text-muted-foreground text-center mt-5">
                     Otomatis ter-reset pada jam 00:00 dini hari
                 </p>
             </div>
