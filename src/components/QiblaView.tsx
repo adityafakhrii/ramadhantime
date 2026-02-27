@@ -33,48 +33,43 @@ export const QiblaView = ({ onBack }: QiblaViewProps) => {
         setQiblaBearing(qibla);
     }, [location]);
 
-    const handleOrientation = useCallback((event: DeviceOrientationEvent | any) => {
-        let currentHeading = null;
+    const handleOrientation = useCallback((event: DeviceOrientationEvent & { webkitCompassHeading?: number }) => {
         if (event.webkitCompassHeading !== undefined) {
-            currentHeading = event.webkitCompassHeading;
+            setHeading(event.webkitCompassHeading);
         } else if (event.alpha !== null) {
             // Standard fallback (Android usually uses alpha 0 for North in absolute mode)
             // Often alpha is counter-clockwise, so we use 360 - alpha
-            currentHeading = 360 - event.alpha;
+            setHeading(360 - event.alpha);
         }
+    }, [setHeading]);
 
-        if (currentHeading !== null) {
-            setHeading(currentHeading);
-        }
-    }, []);
-
-    const startCompass = useCallback(() => {
-        if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
-            (DeviceOrientationEvent as any).requestPermission()
-                .then((permissionState: string) => {
-                    if (permissionState === 'granted') {
-                        setNeedsPermission(false);
-                        window.addEventListener('deviceorientation', handleOrientation, true);
-                    } else {
-                        setError("Izin akses sensor/kompas ditolak oleh browser.");
-                    }
-                })
-                .catch((err: any) => {
-                    console.error(err);
-                    setError("Gagal meminta izin kompas (Pastikan memakai HTTPS).");
-                });
+    // Request permission for iOS 13+ devices
+    const startCompass = useCallback(async () => {
+        if (typeof (DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> }).requestPermission === 'function') {
+            try {
+                const permissionState = await (DeviceOrientationEvent as unknown as { requestPermission: () => Promise<string> }).requestPermission();
+                if (permissionState === 'granted') {
+                    setNeedsPermission(false);
+                    window.addEventListener('deviceorientation', handleOrientation as EventListener, true);
+                } else {
+                    setError("Izin akses sensor/kompas ditolak oleh browser.");
+                }
+            } catch (err: unknown) {
+                console.error(err);
+                setError("Gagal meminta izin kompas (Pastikan memakai HTTPS).");
+            }
         } else {
             // Non iOS 13+ devices
             setNeedsPermission(false);
             // Try absolute first for precise compass
-            window.addEventListener('deviceorientationabsolute', handleOrientation as any, true);
+            window.addEventListener('deviceorientationabsolute', handleOrientation as EventListener, true);
             // Fallback for some browsers
-            window.addEventListener('deviceorientation', handleOrientation, true);
+            window.addEventListener('deviceorientation', handleOrientation as EventListener, true);
         }
     }, [handleOrientation]);
 
     useEffect(() => {
-        if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+        if (typeof (DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> }).requestPermission === 'function') {
             setNeedsPermission(true);
         } else {
             startCompass();

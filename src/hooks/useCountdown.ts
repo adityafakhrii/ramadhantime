@@ -89,7 +89,7 @@ export function useCountdown(prayerTimes: PrayerTimesData | null, timezone?: str
       progress,
       isZero
     };
-  }, [prayerTimes, now]);
+  }, [prayerTimes, now, timezone]);
 
   useEffect(() => {
     // Only trigger once when countdown hits exactly 00:00:00
@@ -109,7 +109,7 @@ export function useCountdown(prayerTimes: PrayerTimesData | null, timezone?: str
         }
       }
     }
-  }, [state?.hours, state?.minutes, state?.seconds, state?.label]);
+  }, [state?.hours, state?.minutes, state?.seconds, state?.label, state]);
 
   return state;
 }

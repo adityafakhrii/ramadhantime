@@ -42,7 +42,9 @@ export const QuranView = () => {
         if (stored) {
             try {
                 setLastRead(JSON.parse(stored));
-            } catch (e) { }
+            } catch (e) {
+                console.error("Failed to parse last read data from localStorage", e);
+            }
         }
 
         // Fetch surah list

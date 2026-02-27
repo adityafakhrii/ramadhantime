@@ -55,9 +55,9 @@ export function usePrayerTimes(location: LocationData | null) {
       const todayStr = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${year}`;
 
       Object.keys(data).forEach((monthKey) => {
-        data[monthKey].forEach((day: any) => {
+        data[monthKey].forEach((day: { timings: Record<string, string>; date: { hijri: unknown; gregorian: { date: string } } }) => {
           const t = day.timings;
-          const h = day.date.hijri;
+          const h = day.date.hijri as { day: string; month: { en: string }; year: string };
           const dateStr = day.date.gregorian.date; // DD-MM-YYYY
           const entry: PrayerTimesData = {
             Imsak: t.Imsak.split(' ')[0],
@@ -97,7 +97,7 @@ export function usePrayerTimes(location: LocationData | null) {
     } finally {
       setLoading(false);
     }
-  }, [location?.latitude, location?.longitude]);
+  }, [location]);
 
   useEffect(() => {
     fetchMonthly();

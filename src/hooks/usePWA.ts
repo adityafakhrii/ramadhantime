@@ -1,13 +1,20 @@
 import { useState, useEffect, useCallback } from 'react';
 
+// Standard TypeScript interface for the beforeinstallprompt event
+interface BeforeInstallPromptEvent extends Event {
+    prompt: () => void;
+    userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
 export function usePWA() {
-    const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+    const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
     const [isInstallable, setIsInstallable] = useState(false);
 
     useEffect(() => {
-        const handler = (e: any) => {
-            e.preventDefault();
-            setDeferredPrompt(e);
+        const handler = (e: Event) => {
+            const promptEvent = e as BeforeInstallPromptEvent;
+            promptEvent.preventDefault();
+            setDeferredPrompt(promptEvent);
             setIsInstallable(true);
         };
 

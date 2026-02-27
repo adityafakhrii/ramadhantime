@@ -132,7 +132,7 @@ export function CalendarView({ monthlyTimes }: CalendarViewProps) {
                   <div key={key} className="text-center">
                     <p className="text-[10px] text-muted-foreground">{PRAYER_LABELS[key]}</p>
                     <p className="text-xs font-semibold font-mono-timer text-foreground">
-                      {(times as any)[key]}
+                      {(times as unknown as Record<string, string>)[key]}
                     </p>
                   </div>
                 ))}

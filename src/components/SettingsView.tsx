@@ -20,12 +20,22 @@ interface SettingsViewProps {
   onInstallApp: () => void;
 }
 
+interface CitySuggestion {
+  id: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+  admin1?: string;
+  country?: string;
+  timezone?: string;
+}
+
 export function SettingsView({
   isDark, onToggleTheme, onSearchCity, onDetectLocation, locationLoading, cityName,
   iftarNotif, sahurNotif, onToggleIftar, onToggleSahur, onSelectCity, isInstallable, onInstallApp
 }: SettingsViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<CitySuggestion[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -189,7 +199,7 @@ export function SettingsView({
                   <div className="p-3 text-sm text-muted-foreground text-center">Mencari...</div>
                 ) : suggestions.length > 0 ? (
                   <div className="py-1">
-                    {suggestions.map((s: any) => (
+                    {suggestions.map((s) => (
                       <button
                         key={s.id}
                         className="w-full text-left px-4 py-2 text-sm hover:bg-muted text-foreground transition-colors flex flex-col"
