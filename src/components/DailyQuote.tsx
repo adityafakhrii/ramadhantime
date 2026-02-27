@@ -3,22 +3,44 @@ import { Quote } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const QUOTES = [
-    { text: "Berpuasalah kalian niscaya kalian akan sehat.", source: "HR. Ath-Thabrani" },
-    { text: "Barangsiapa berpuasa Ramadhan atas dasar iman dan mengharap pahala dari Allah, maka dosanya yang telah lalu akan diampuni.", source: "HR. Bukhari no. 38" },
-    { text: "Hai orang-orang yang beriman, diwajibkan atas kamu berpuasa sebagaimana diwajibkan atas orang-orang sebelum kamu agar kamu bertakwa.", source: "QS. Al-Baqarah: 183" },
-    { text: "Bulan Ramadhan adalah (bulan) yang di dalamnya diturunkan Al-Qur'an, sebagai petunjuk bagi manusia dan penjelasan-penjelasan mengenai petunjuk itu dan pembeda (antara yang benar dan yang batil).", source: "QS. Al-Baqarah: 185" },
-    { text: "Tiga doa yang tidak tertolak: doa orang yang berpuasa ketika berbuka, doa pemimpin yang adil, dan doa orang yang terzalimi.", source: "HR. Tirmidzi" },
-    { text: "Makan sahurlah kalian karena dalam makan sahur terdapat keberkahan.", source: "HR. Muttafaqun 'alaih" },
-    { text: "Puasa itu adalah perisai (dari kemaksiatan dan siksa neraka).", source: "HR. Bukhari no. 1894" }
+    { text: "Barangsiapa berpuasa Ramadhan atas dasar iman dan mengharap pahala dari Allah, maka dosanya yang telah lalu akan diampuni.", source: "HR. Bukhari" },
+    { text: "Tiga doa yang tidak tertolak: doa orang yang berpuasa, pemimpin adil, dan orang yang didzalimi.", source: "HR. Tirmidzi" },
+    { text: "Wahai orang-orang yang beriman, diwajibkan atas kamu berpuasa.", source: "QS. Al-Baqarah: 183" },
+    { text: "Bulan Ramadhan, bulan yang di dalamnya diturunkan permulaan Al-Qur'an.", source: "QS. Al-Baqarah: 185" },
+    { text: "Puasa itu pelindung. Maka janganlah berkata kotor dan jahil.", source: "HR. Bukhari & Muslim" },
+    { text: "Sebaik-baik orang di antara kalian adalah yang belajar Al-Qur'an dan mengajarkannya.", source: "HR. Bukhari" },
+    { text: "Senyummu di hadapan saudaramu adalah sedekah.", source: "HR. Tirmidzi" },
+    { text: "Makan sahurlah kalian, karena sesungguhnya dalam sahur itu terdapat keberkahan.", source: "HR. Muttafaqun 'alaih" },
+    { text: "Jangan meremehkan kebaikan sekecil apapun, meski hanya menjumpai saudaramu dengan wajah ceria.", source: "HR. Muslim" },
+    { text: "Setiap amal anak Adam dilipatgandakan. Kecuali puasa, ia untuk-Ku dan Aku yang membalasnya.", source: "HR. Muslim" },
+    { text: "Sedekah dapat menghapus dosa sebagaimana air memadamkan api.", source: "HR. Tirmidzi" },
+    { text: "Agama itu adalah nasihat.", source: "HR. Muslim" },
+    { text: "Barangsiapa tidak meninggalkan perkataan dan perbuatan dusta, Allah tidak butuh ia meninggalkan makan dan minum.", source: "HR. Bukhari" },
+    { text: "Tidaklah seorang hamba berpuasa sehari di jalan Allah melainkan Allah akan menjauhkan wajahnya dari neraka.", source: "HR. Bukhari & Muslim" },
+    { text: "Shalat lima waktu, Jumat ke Jumat, dan Ramadhan ke Ramadhan adalah penghapus dosa di antaranya.", source: "HR. Muslim" },
+    { text: "Barangsiapa membangun masjid karena Allah, maka Allah bangunkan baginya rumah di surga.", source: "HR. Muttafaqun 'alaih" },
+    { text: "Sesungguhnya Allah menyukai orang-orang yang bertaubat dan menyukai orang-orang yang menyucikan diri.", source: "QS. Al-Baqarah: 222" },
+    { text: "Amalan yang paling dicintai Allah adalah yang terus-menerus (istiqamah) walau sedikit.", source: "HR. Bukhari & Muslim" },
+    { text: "Perumpamaan teman yang shalih dan teman yang buruk ialah seperti membawa minyak wangi dan pandai besi.", source: "HR. Bukhari" },
+    { text: "Sesungguhnya di surga ada pintu yang bernama Ar-Rayyan, yang akan dimasuki oleh orang-orang yang berpuasa.", source: "HR. Bukhari & Muslim" },
+    { text: "Urusan orang mukmin itu sungguh menakjubkan. Semua urusannya baik baginya.", source: "HR. Muslim" },
+    { text: "Apabila datang bulan Ramadhan, pintu-pintu surga dibuka, pintu-pintu neraka ditutup dan setan-setan dibelenggu.", source: "HR. Bukhari & Muslim" },
+    { text: "Orang yang paling berat cobaannya adalah para Nabi, kemudian yang semisal lalu yang semisal.", source: "HR. Tirmidzi" },
+    { text: "Malu adalah bagian dari keimanan.", source: "HR. Bukhari & Muslim" },
+    { text: "Orang miskin itu bukanlah orang yang berkeliling minta-minta, akan tetapi yang tidak punya kecukupan namun menahan diri.", source: "HR. Bukhari" },
+    { text: "Wahai kaum pemuda, barangsiapa diantara kalian telah mampu maka menikahlah, karena ia lebih menundukkan pandangan.", source: "HR. Bukhari" },
+    { text: "Carilah Lailatul Qadar di malam ganjil dari sepuluh hari terakhir di bulan Ramadhan.", source: "HR. Bukhari" },
+    { text: "Menuntut ilmu itu wajib atas setiap Muslim.", source: "HR. Ibnu Majah" },
+    { text: "Siapa yang menempuh jalan untuk mencari ilmu, maka Allah akan mudahkan baginya jalan menuju surga.", source: "HR. Muslim" },
+    { text: "Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lainnya.", source: "HR. Ahmad" }
 ];
 
 export const DailyQuote = () => {
     // Use today's date to pick a consistent quote for the day
     const dailyQuote = useMemo(() => {
         const today = new Date();
-        // Simple hash based on year, month, and day
-        const dayIndex = (today.getFullYear() + today.getMonth() + today.getDate()) % QUOTES.length;
-        return QUOTES[dayIndex];
+        const dayIndex = (today.getDate() - 1) % QUOTES.length; // Use day of month (1-31), wrapping modulo to prevent index error
+        return QUOTES[dayIndex] || QUOTES[0];
     }, []);
 
     return (
