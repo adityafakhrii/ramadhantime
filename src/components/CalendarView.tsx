@@ -1,5 +1,9 @@
+import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Download, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import html2canvas from 'html2canvas';
 import type { MonthlyPrayerData } from '@/hooks/usePrayerTimes';
 
 interface CalendarViewProps {
@@ -13,6 +17,43 @@ const PRAYER_LABELS: Record<string, string> = {
 };
 
 export function CalendarView({ monthlyTimes }: CalendarViewProps) {
+  const captureRef = useRef<HTMLDivElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const exportAsImage = async () => {
+    if (!captureRef.current) return;
+    try {
+      setIsExporting(true);
+      toast.loading("Menyiapkan gambar jadwal...", { id: "export-jadwal" });
+
+      // Temporarily add padding to make the image look good
+      const originalPb = captureRef.current.style.paddingBottom;
+      captureRef.current.style.paddingBottom = '32px';
+
+      const canvas = await html2canvas(captureRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: window.getComputedStyle(document.body).backgroundColor,
+      });
+
+      // Revert styling
+      captureRef.current.style.paddingBottom = originalPb;
+
+      const image = canvas.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = image;
+      a.download = `Jadwal-Imsakiyah-Ramadhan.png`;
+      a.click();
+
+      toast.success("Gambar berhasil disimpan!", { id: "export-jadwal" });
+    } catch (error) {
+      console.error("Failed to export image", error);
+      toast.error("Gagal menyimpan gambar", { id: "export-jadwal" });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const entries = Object.entries(monthlyTimes).filter(([date]) => {
     const [d, m] = date.split('-').map(Number);
     // Ramadhan window: Feb 19 to Mar 20
@@ -38,8 +79,20 @@ export function CalendarView({ monthlyTimes }: CalendarViewProps) {
 
   return (
     <ScrollArea className="h-[calc(100vh-10rem)]">
-      <div className="space-y-3 px-4 pb-28 pt-2">
-        <h2 className="text-lg font-bold text-foreground">Hitung Mundur Ramadhan</h2>
+      <div className="px-4 pt-2">
+        <div className="flex items-center justify-between mb-4 mt-2">
+          <h2 className="text-xl font-bold text-foreground">Jadwal Imsakiyah</h2>
+          <button
+            onClick={exportAsImage}
+            disabled={isExporting}
+            className="p-2.5 bg-primary/10 text-primary rounded-xl flex items-center justify-center hover:bg-primary/20 transition-colors"
+            title="Download Jadwal sebulan full"
+          >
+            {isExporting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
+          </button>
+        </div>
+      </div>
+      <div ref={captureRef} className="space-y-3 px-4 pb-28 bg-background">
         {entries.map(([date, times], i) => {
           const isToday = date === todayStr;
           const [day, month] = date.split('-');

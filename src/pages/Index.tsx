@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { MapPin, Sunset, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/hooks/useTheme';
@@ -14,9 +14,14 @@ import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { BottomNav, type TabType } from '@/components/BottomNav';
 import { Switch } from '@/components/ui/switch';
 import { RealtimeClock } from '@/components/RealtimeClock';
+import { DoaView } from '@/components/DoaView';
+import { QuranView } from '@/components/QuranView';
 import { PWAPrompt } from '@/components/PWAPrompt';
+import { DailyQuote } from '@/components/DailyQuote';
+import { HabitTracker } from '@/components/HabitTracker';
 import { useNotifications } from '@/hooks/useNotifications';
 import { usePWA } from '@/hooks/usePWA';
+import { toast } from 'sonner';
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -28,9 +33,54 @@ const Index = () => {
   const { iftarNotif, sahurNotif, toggleIftar, toggleSahur } = useNotifications();
   const { isInstallable, promptInstall } = usePWA();
 
-  const handleSplashFinish = useCallback(() => setShowSplash(false), []);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isAlarmRinging, setIsAlarmRinging] = useState(false);
+
+  const stopAlarm = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsAlarmRinging(false);
+      toast.dismiss();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+      audioRef.current.loop = true;
+    }
+  }, []);
 
   const isLoading = locLoading || prayerLoading;
+
+  useEffect(() => {
+    if (countdown?.isZero && !isLoading) {
+      const isMaghrib = countdown.label.includes('Buka');
+      const isSahur = !isMaghrib;
+
+      if ((isMaghrib && iftarNotif) || (isSahur && sahurNotif)) {
+        if (audioRef.current) {
+          audioRef.current.play().then(() => {
+            setIsAlarmRinging(true);
+            toast("Waktunya tiba!", {
+              description: isMaghrib ? "Saatnya berbuka puasa." : "Waktu sahur akan segera berakhir.",
+              action: {
+                label: "Matikan",
+                onClick: () => stopAlarm()
+              },
+              duration: 60000
+            });
+          }).catch(e => {
+            console.error("Audio autoplay blocked by browser", e);
+            toast.error("Waktunya tiba! (Audio dibatasi browser, tekan di mana saja untuk izinkan)");
+          });
+        }
+      }
+    }
+  }, [countdown?.isZero, countdown?.label, iftarNotif, sahurNotif, isLoading, stopAlarm]);
+
+  const handleSplashFinish = useCallback(() => setShowSplash(false), []);
 
   // Minta izin notifikasi sekali saat aplikasi dimuat pertama kali
   useEffect(() => {
@@ -55,6 +105,29 @@ const Index = () => {
   return (
     <>
       <PWAPrompt isInstallable={isInstallable} onInstall={promptInstall} />
+
+      <AnimatePresence>
+        {isAlarmRinging && (
+          <motion.div
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -100, opacity: 0 }}
+            className="fixed top-4 left-4 right-4 z-[100] bg-primary text-primary-foreground p-4 rounded-2xl shadow-xl flex items-center justify-between"
+          >
+            <div>
+              <p className="font-bold text-lg">Alarm Berbunyi!</p>
+              <p className="text-sm opacity-90">Tekan tombol untuk mematikan.</p>
+            </div>
+            <button
+              onClick={stopAlarm}
+              className="bg-background text-foreground px-4 py-2 rounded-xl font-bold hover:opacity-90 transition-opacity whitespace-nowrap shadow-sm"
+            >
+              Matiin
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="min-h-screen bg-background pb-24">
         <div className="max-w-lg mx-auto">
           <AnimatePresence mode="wait">
@@ -118,53 +191,57 @@ const Index = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="px-5 space-y-5">
-                    <RealtimeClock />
-                    {/* Main Layout: Alert Column & Prayer List Column */}
-                    <div className="grid grid-cols-2 gap-3">
+                  <>
+                    <div className="px-5 space-y-5">
+                      <RealtimeClock />
+                      {/* Main Layout: Alert Column & Prayer List Column */}
+                      <div className="grid grid-cols-2 gap-3">
 
-                      {/* Alert Column */}
-                      <div className="flex flex-col gap-3">
-                        {/* Iftar Alert Card */}
-                        <div className="rounded-2xl shadow-neu p-4 bg-background flex-1 flex flex-col justify-between">
-                          <div className="flex items-center justify-between mb-3">
-                            <Sunset className="w-5 h-5 text-foreground" />
-                            <Switch checked={iftarNotif} onCheckedChange={toggleIftar} />
+                        {/* Alert Column */}
+                        <div className="flex flex-col gap-3">
+                          {/* Iftar Alert Card */}
+                          <div className="rounded-2xl shadow-neu p-4 bg-background flex-1 flex flex-col justify-between">
+                            <div className="flex items-center justify-between mb-3">
+                              <Sunset className="w-5 h-5 text-foreground" />
+                              <Switch checked={iftarNotif} onCheckedChange={toggleIftar} />
+                            </div>
+                            <div>
+                              <p className="text-4xl font-bold font-mono-timer text-foreground">
+                                {todayTimes?.Maghrib || '--:--'}
+                              </p>
+                              <p className="text-sm text-muted-foreground mt-1">Alarm Buka</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-4xl font-bold font-mono-timer text-foreground">
-                              {todayTimes?.Maghrib || '--:--'}
-                            </p>
-                            <p className="text-sm text-muted-foreground mt-1">Alarm Buka</p>
+
+                          {/* Sehar Alert Card */}
+                          <div className="rounded-2xl shadow-neu p-4 bg-background flex-1 flex flex-col justify-between">
+                            <div className="flex items-center justify-between mb-3">
+                              <Moon className="w-5 h-5 text-foreground" />
+                              <Switch checked={sahurNotif} onCheckedChange={toggleSahur} />
+                            </div>
+                            <div>
+                              <p className="text-4xl font-bold font-mono-timer text-foreground">
+                                {todayTimes?.Imsak || '--:--'}
+                              </p>
+                              <p className="text-sm text-muted-foreground mt-1">Alarm Sahur</p>
+                            </div>
                           </div>
                         </div>
 
-                        {/* Sehar Alert Card */}
-                        <div className="rounded-2xl shadow-neu p-4 bg-background flex-1 flex flex-col justify-between">
-                          <div className="flex items-center justify-between mb-3">
-                            <Moon className="w-5 h-5 text-foreground" />
-                            <Switch checked={sahurNotif} onCheckedChange={toggleSahur} />
-                          </div>
-                          <div>
-                            <p className="text-4xl font-bold font-mono-timer text-foreground">
-                              {todayTimes?.Imsak || '--:--'}
-                            </p>
-                            <p className="text-sm text-muted-foreground mt-1">Alarm Sahur</p>
-                          </div>
+                        {/* Prayer List Card Column */}
+                        <div className="flex flex-col">
+                          {todayTimes && <PrayerSchedule times={todayTimes} />}
                         </div>
                       </div>
 
-                      {/* Prayer List Card Column */}
-                      <div className="flex flex-col">
-                        {todayTimes && <PrayerSchedule times={todayTimes} />}
-                      </div>
+                      {/* Greeting */}
+                      <p className="text-center text-xs text-muted-foreground italic pb-2">
+                        Stay Halal Brother & Sister! ✨
+                      </p>
                     </div>
-
-                    {/* Greeting */}
-                    <p className="text-center text-xs text-muted-foreground italic pb-2">
-                      Stay Halal Brother & Sister! ✨
-                    </p>
-                  </div>
+                    <HabitTracker />
+                    <DailyQuote />
+                  </>
                 )}
               </motion.main>
             )}
@@ -238,6 +315,14 @@ const Index = () => {
                 ) : null}
                 {location && <CalendarView monthlyTimes={monthlyTimes} />}
               </motion.div>
+            )}
+
+            {activeTab === 'doa' && (
+              <DoaView key="doa" />
+            )}
+
+            {activeTab === 'quran' && (
+              <QuranView key="quran" />
             )}
 
             {activeTab === 'settings' && (

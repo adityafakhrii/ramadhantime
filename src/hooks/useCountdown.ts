@@ -8,6 +8,7 @@ interface CountdownState {
   label: string; // "Menuju Maghrib" or "Menuju Imsak"
   targetTime: string;
   progress: number; // 0-1 progress through the countdown period
+  isZero: boolean;
 }
 
 function timeToMinutes(timeStr: string): number {
@@ -78,6 +79,8 @@ export function useCountdown(prayerTimes: PrayerTimesData | null): CountdownStat
     if (elapsed < 0) elapsed += 24 * 60;
     const progress = totalPeriod > 0 ? Math.min(1, Math.max(0, elapsed / totalPeriod)) : 0;
 
+    const isZero = hours === 0 && minutes === 0 && seconds === 0;
+
     return {
       hours,
       minutes,
@@ -85,6 +88,7 @@ export function useCountdown(prayerTimes: PrayerTimesData | null): CountdownStat
       label,
       targetTime: label.includes('Buka') ? prayerTimes.Maghrib : prayerTimes.Fajr,
       progress,
+      isZero
     };
   }, [prayerTimes, now]);
 

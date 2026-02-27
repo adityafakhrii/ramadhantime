@@ -1,7 +1,7 @@
-import { Home, Timer, Settings } from 'lucide-react';
+import { Home, Timer, Settings, BookOpen, BookOpenText } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export type TabType = 'home' | 'calendar' | 'settings';
+export type TabType = 'home' | 'calendar' | 'doa' | 'quran' | 'settings';
 
 interface BottomNavProps {
   active: TabType;
@@ -11,6 +11,8 @@ interface BottomNavProps {
 const tabs = [
   { id: 'home' as TabType, label: 'Beranda', icon: Home },
   { id: 'calendar' as TabType, label: 'Jadwal', icon: Timer },
+  { id: 'doa' as TabType, label: 'Doa', icon: BookOpen },
+  { id: 'quran' as TabType, label: 'Al-Quran', icon: BookOpenText },
   { id: 'settings' as TabType, label: 'Pengaturan', icon: Settings },
 ];
 
