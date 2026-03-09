@@ -20,6 +20,7 @@ import { ZakatView } from '@/components/ZakatView';
 import { QiblaView } from '@/components/QiblaView';
 import { PWAPrompt } from '@/components/PWAPrompt';
 import { DailyQuote } from '@/components/DailyQuote';
+import { ShareScheduleCard } from '@/components/ShareScheduleCard';
 import { HabitTracker } from '@/components/HabitTracker';
 import { useNotifications } from '@/hooks/useNotifications';
 import { usePWA } from '@/hooks/usePWA';
