@@ -66,6 +66,11 @@ export function PrayerSchedule({ times, timezone, city }: PrayerScheduleProps) {
           );
         })}
       </div>
+      {city && (
+        <div className="mt-3">
+          <ShareScheduleCard times={times} city={city} />
+        </div>
+      )}
     </div>
   );
 }
