@@ -26,7 +26,11 @@ interface SurahDetail extends Surah {
     ayat: Ayat[];
 }
 
-export const QuranView = () => {
+interface QuranViewProps {
+    onFocusModeChange?: (isFocus: boolean) => void;
+}
+
+export const QuranView = ({ onFocusModeChange }: QuranViewProps) => {
     const [surahs, setSurahs] = useState<Surah[]>([]);
     const [loading, setLoading] = useState(true);
 
