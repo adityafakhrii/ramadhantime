@@ -26,7 +26,11 @@ interface SurahDetail extends Surah {
     ayat: Ayat[];
 }
 
-export const QuranView = () => {
+interface QuranViewProps {
+    onFocusModeChange?: (isFocus: boolean) => void;
+}
+
+export const QuranView = ({ onFocusModeChange }: QuranViewProps) => {
     const [surahs, setSurahs] = useState<Surah[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -211,7 +215,7 @@ export const QuranView = () => {
                                         <p className="text-xs text-muted-foreground">{surahDetail.arti} • {surahDetail.jumlahAyat} Ayat</p>
                                     </div>
                                     <button
-                                        onClick={() => setIsFocusMode(!isFocusMode)}
+                                        onClick={() => { const next = !isFocusMode; setIsFocusMode(next); onFocusModeChange?.(next); }}
                                         className="p-2 bg-primary/10 text-primary rounded-xl hover:bg-primary/20 transition-colors shrink-0"
                                         title={isFocusMode ? "Keluar Mode Khusyuk" : "Mode Khusyuk (Layar Penuh)"}
                                     >
