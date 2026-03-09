@@ -265,7 +265,7 @@ const Index = () => {
 
                         {/* Prayer List Card Column */}
                         <div className="flex flex-col">
-                          {todayTimes && <PrayerSchedule times={todayTimes} timezone={location?.timezone} />}
+                          {todayTimes && <PrayerSchedule times={todayTimes} timezone={location?.timezone} city={location?.city} />}
                         </div>
                       </div>
 
@@ -294,10 +294,6 @@ const Index = () => {
                         </button>
                       </div>
 
-                      {/* Share Schedule */}
-                      {todayTimes && (
-                        <ShareScheduleCard times={todayTimes} city={location.city} />
-                      )}
 
                       {/* Greeting */}
                       <p className="text-center text-xs text-muted-foreground italic pb-2">
