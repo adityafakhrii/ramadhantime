@@ -294,9 +294,14 @@ const Index = () => {
                         </button>
                       </div>
 
+                      {/* Share Schedule */}
+                      {todayTimes && (
+                        <ShareScheduleCard times={todayTimes} city={location.city} />
+                      )}
+
                       {/* Greeting */}
                       <p className="text-center text-xs text-muted-foreground italic pb-2">
-                        Stay Halal Brother & Sister! ✨
+                        Stay Halal Brother & Sister!
                       </p>
                     </div>
                     <HabitTracker />
