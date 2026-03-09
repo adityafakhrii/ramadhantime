@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
 import type { PrayerTimesData } from '@/hooks/usePrayerTimes';
 import { getZonedTime } from '@/lib/time';
+import { ShareScheduleCard } from '@/components/ShareScheduleCard';
 
 interface PrayerScheduleProps {
   times: PrayerTimesData;
   timezone?: string;
+  city?: string;
 }
 
 const PRAYER_LABELS: { key: keyof PrayerTimesData; label: string }[] = [
