@@ -29,7 +29,7 @@ function getNextPrayer(times: PrayerTimesData, timezone?: string): string | null
   return null;
 }
 
-export function PrayerSchedule({ times, timezone }: PrayerScheduleProps) {
+export function PrayerSchedule({ times, timezone, city }: PrayerScheduleProps) {
   const nextPrayer = getNextPrayer(times, timezone);
 
   return (
