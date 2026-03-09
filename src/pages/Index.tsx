@@ -386,7 +386,11 @@ const Index = () => {
             )}
 
             {activeTab === 'quran' && (
-              <QuranView key="quran" />
+              <QuranView key="quran" onFocusModeChange={(focus) => {
+                // Hide/show bottom nav based on focus mode
+                const nav = document.getElementById('bottom-nav');
+                if (nav) nav.style.display = focus ? 'none' : '';
+              }} />
             )}
 
             {activeTab === 'settings' && (
