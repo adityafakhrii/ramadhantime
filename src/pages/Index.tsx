@@ -162,7 +162,7 @@ const Index = () => {
         )}
       </AnimatePresence>
 
-      <div className="min-h-screen bg-background pb-24">
+      <div className="min-h-screen bg-background pb-20">
         <div className="max-w-lg mx-auto">
           <AnimatePresence mode="wait">
             {activeTab === 'home' && (

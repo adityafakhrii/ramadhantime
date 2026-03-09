@@ -116,7 +116,7 @@ export const QuranView = ({ onFocusModeChange }: QuranViewProps) => {
     // Derived classes for Focus Mode
     const containerClass = isFocusMode
         ? "fixed inset-0 z-50 bg-background flex flex-col pt-8 pb-4 px-4"
-        : "pt-6 px-4 pb-24 h-[calc(100vh-5rem)]";
+        : "pt-6 px-4 pb-20 h-[calc(100vh-4rem)]";
 
     return (
         <div className={containerClass}>
