@@ -1,73 +1,71 @@
-# Welcome to your Lovable project
+# Ramadhan Time
+Aplikasi Asisten Amaliah Ramadhan All-in-One Berbasis PWA
 
-## Project info
+## Tentang Proyek
+Ramadhan Time adalah aplikasi web progresif (Progressive Web App / PWA) yang dirancang untuk menjadi pendamping ibadah umat Muslim, khususnya selama bulan suci Ramadhan. Aplikasi ini dikembangkan dengan pendekatan mobile-first dan antarmuka (UI/UX) modern.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Fitur Utama
+- Jadwal & Countdown Sholat Real-time: Menampilkan jadwal sholat secara presisi berdasarkan deteksi lokasi pengguna dan zona waktu.
+- Alarm Otomatis: Notifikasi dan alarm tepat waktu untuk pengingat buka puasa dan sahur.
+- Al-Quran Digital Terintegrasi:
+  - Mode Khusyuk (Layar Penuh).
+  - Penanda Ayat Terakhir Dibaca.
+  - Audio Murottal.
+  - Fitur Auto-Scroll.
+- Kompas Arah Kiblat: Mengolah data sensor orientasi perangkat pintar untuk menunjukkan arah kiblat secara presisi.
+- Kalkulator Zakat: Modul perhitungan kewajiban zakat fitrah dan zakat maal.
+- Kumpulan Doa Pilihan: Akses cepat ke berbagai doa harian dan amalan.
+- Habit Tracker: Sistem pelacakan rutinitas ibadah, seperti target tarawih dan tilawah harian untuk mengevaluasi progres amalan.
+- Daily Quote: Pengingat atau kutipan inspiratif dari ayat maupun hadits setiap hari.
+- Dukungan PWA: Mendukung instalasi native ke layar perangkat (Add to Home Screen) serta memiliki cache optimal untuk mengurangi penggunaan data.
 
-## How can I edit this code?
+## Teknologi dan Arsitektur
+Proyek ini mengadopsi standar pengembangan modern web apps:
+- Frontend Framework: React.js (v18) via Vite.
+- Bahasa: TypeScript menjamin keamanan tipe data menyeluruh di setiap state.
+- Styling: Tailwind CSS untuk styling, bersinergi dengan komponen *accessible* dari Radix UI / Shadcn UI.
+- Animasi UI: Framer Motion.
+- Data Fetching: @tanstack/react-query menangani caching maupun validasi data API pihak ketiga.
+- Routing: React Router DOM (v6).
+- Penyimpanan: Pemanfaatan LocalStorage untuk menjaga persistensi pengaturan pengguna, histori bacaan, serta habit tracker secara lokal.
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+## Struktur Direktori
+```text
+src/
+├── components/   # Komponen spesifik fitur (QuranView, HabitTracker, Kompas, dll)
+│   └── ui/       # Komponen UI dasar (Shadcn UI)
+├── data/         # Objek data statis internal
+├── hooks/        # Custom React hooks (usePrayerTimes, usePWA, useLocation, dll)
+├── lib/          # Helper dan utility functions
+├── pages/        # Komponen rute halaman utama
+└── styles/       # Konfigurasi gaya tambahan dan file CSS
 ```
 
-**Edit a file directly in GitHub**
+## Setup Lingkungan Lokal
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+**Prasyarat**: Pastikan Node.js telah terinstal pada sistem Anda.
 
-**Use GitHub Codespaces**
+1. Clone repositori ini:
+   ```bash
+   git clone <url-repo-anda>
+   cd ramadhantime
+   ```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+2. Instalasi dependensi (mendukung npm, yarn, pnpm, atau bun):
+   ```bash
+   npm install
+   ```
 
-## What technologies are used for this project?
+3. Jalankan server pengembangan mode lokal:
+   ```bash
+   npm run dev
+   ```
 
-This project is built with:
+4. Akses proyek melalui `http://localhost:5173` dari browser pilihan Anda.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## Deployment dan Build
+Untuk mempersiapkan environment production:
+```bash
+npm run build
+```
+Bundle aplikasi hasil minimasi dan optimalisasi dapat ditemukan di direktori `dist/` (atau direktori keluaran konfigurasi Vite Anda), yang siap didistribusikan ke layanan hosting web statis.
