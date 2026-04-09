@@ -55,7 +55,7 @@ export const DoaView = () => {
 
             <div className="flex-1 overflow-hidden">
                 {tab === 'doa' ? (
-                    <ScrollArea className="h-full pr-3">
+                    <ScrollArea className="h-full">
                         <div className="space-y-8 pb-10">
                             {DOA_CATEGORIES.map((cat) => (
                                 <section key={cat.title}>
@@ -95,9 +95,11 @@ export const DoaView = () => {
                         </div>
                     </ScrollArea>
                 ) : (
-                    <ScrollArea className="h-full pr-3">
-                        <div className="pb-10">
-                            <TasbihCounter />
+                    <ScrollArea className="h-full w-full">
+                        <div className="flex flex-col items-center pb-20 px-2">
+                            <div className="w-full max-w-sm">
+                                <TasbihCounter />
+                            </div>
                         </div>
                     </ScrollArea>
                 )}

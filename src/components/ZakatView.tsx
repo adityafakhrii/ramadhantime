@@ -63,7 +63,7 @@ export const ZakatView = ({ onBack }: ZakatViewProps) => {
                 </TabsList>
 
                 <div className="flex-1 overflow-hidden">
-                    <ScrollArea className="h-full pr-3">
+                    <ScrollArea className="h-full">
                         <TabsContent value="fitrah" className="m-0 space-y-6 pb-10">
                             <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4">
                                 <p className="text-sm text-foreground/80 leading-relaxed">
