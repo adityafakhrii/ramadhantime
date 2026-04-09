@@ -38,7 +38,7 @@ export const ZakatView = ({ onBack }: ZakatViewProps) => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="pt-6 px-4 pb-24 h-[calc(100vh-5rem)] flex flex-col"
+            className="pt-6 px-4 pb-20 h-[calc(100vh-4rem)] flex flex-col"
         >
             <div className="flex items-center gap-4 mb-6 shrink-0">
                 <button

@@ -20,6 +20,7 @@ import { ZakatView } from '@/components/ZakatView';
 import { QiblaView } from '@/components/QiblaView';
 import { PWAPrompt } from '@/components/PWAPrompt';
 import { DailyQuote } from '@/components/DailyQuote';
+import { ShareScheduleCard } from '@/components/ShareScheduleCard';
 import { HabitTracker } from '@/components/HabitTracker';
 import { useNotifications } from '@/hooks/useNotifications';
 import { usePWA } from '@/hooks/usePWA';
@@ -162,7 +163,7 @@ const Index = () => {
         )}
       </AnimatePresence>
 
-      <div className="min-h-screen bg-background pb-24">
+      <div className="min-h-screen bg-background pb-20">
         <div className="max-w-lg mx-auto">
           <AnimatePresence mode="wait">
             {activeTab === 'home' && (
@@ -264,7 +265,7 @@ const Index = () => {
 
                         {/* Prayer List Card Column */}
                         <div className="flex flex-col">
-                          {todayTimes && <PrayerSchedule times={todayTimes} timezone={location?.timezone} />}
+                          {todayTimes && <PrayerSchedule times={todayTimes} timezone={location?.timezone} city={location?.city} />}
                         </div>
                       </div>
 
@@ -293,9 +294,10 @@ const Index = () => {
                         </button>
                       </div>
 
+
                       {/* Greeting */}
                       <p className="text-center text-xs text-muted-foreground italic pb-2">
-                        Stay Halal Brother & Sister! ✨
+                        Stay Halal Brother & Sister!
                       </p>
                     </div>
                     <HabitTracker />
@@ -386,7 +388,11 @@ const Index = () => {
             )}
 
             {activeTab === 'quran' && (
-              <QuranView key="quran" />
+              <QuranView key="quran" onFocusModeChange={(focus) => {
+                // Hide/show bottom nav based on focus mode
+                const nav = document.getElementById('bottom-nav');
+                if (nav) nav.style.display = focus ? 'none' : '';
+              }} />
             )}
 
             {activeTab === 'settings' && (

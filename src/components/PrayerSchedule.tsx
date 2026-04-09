@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
 import type { PrayerTimesData } from '@/hooks/usePrayerTimes';
 import { getZonedTime } from '@/lib/time';
+import { ShareScheduleCard } from '@/components/ShareScheduleCard';
 
 interface PrayerScheduleProps {
   times: PrayerTimesData;
   timezone?: string;
+  city?: string;
 }
 
 const PRAYER_LABELS: { key: keyof PrayerTimesData; label: string }[] = [
@@ -27,7 +29,7 @@ function getNextPrayer(times: PrayerTimesData, timezone?: string): string | null
   return null;
 }
 
-export function PrayerSchedule({ times, timezone }: PrayerScheduleProps) {
+export function PrayerSchedule({ times, timezone, city }: PrayerScheduleProps) {
   const nextPrayer = getNextPrayer(times, timezone);
 
   return (
@@ -64,6 +66,11 @@ export function PrayerSchedule({ times, timezone }: PrayerScheduleProps) {
           );
         })}
       </div>
+      {city && (
+        <div className="mt-3">
+          <ShareScheduleCard times={times} city={city} />
+        </div>
+      )}
     </div>
   );
 }
