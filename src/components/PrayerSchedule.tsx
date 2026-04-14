@@ -7,10 +7,11 @@ interface PrayerScheduleProps {
   times: PrayerTimesData;
   timezone?: string;
   city?: string;
+  isRamadhan?: boolean;
 }
 
-const PRAYER_LABELS: { key: keyof PrayerTimesData; label: string }[] = [
-  { key: 'Imsak', label: 'Imsak' },
+const ALL_PRAYER_LABELS: { key: keyof PrayerTimesData; label: string; ramadhanOnly?: boolean }[] = [
+  { key: 'Imsak', label: 'Imsak', ramadhanOnly: true },
   { key: 'Fajr', label: 'Subuh' },
   { key: 'Dhuhr', label: 'Dzuhur' },
   { key: 'Asr', label: 'Ashar' },
@@ -18,19 +19,21 @@ const PRAYER_LABELS: { key: keyof PrayerTimesData; label: string }[] = [
   { key: 'Isha', label: 'Isya' },
 ];
 
-function getNextPrayer(times: PrayerTimesData, timezone?: string): string | null {
+function getNextPrayer(times: PrayerTimesData, timezone?: string, isRamadhan?: boolean): string | null {
   const { h, m } = getZonedTime(new Date(), timezone);
   const currentMin = h * 60 + m;
+  const labels = ALL_PRAYER_LABELS.filter(p => !p.ramadhanOnly || isRamadhan);
 
-  for (const p of PRAYER_LABELS) {
+  for (const p of labels) {
     const [th, tm] = (times[p.key] as string).split(':').map(Number);
     if (th * 60 + tm > currentMin) return p.key;
   }
   return null;
 }
 
-export function PrayerSchedule({ times, timezone, city }: PrayerScheduleProps) {
-  const nextPrayer = getNextPrayer(times, timezone);
+export function PrayerSchedule({ times, timezone, city, isRamadhan = false }: PrayerScheduleProps) {
+  const nextPrayer = getNextPrayer(times, timezone, isRamadhan);
+  const visiblePrayers = ALL_PRAYER_LABELS.filter(p => !p.ramadhanOnly || isRamadhan);
 
   return (
     <div className="rounded-2xl shadow-neu p-5 bg-background">
@@ -41,7 +44,7 @@ export function PrayerSchedule({ times, timezone, city }: PrayerScheduleProps) {
         <h3 className="text-xl font-bold text-foreground tracking-wide">Azan</h3>
       </div>
       <div className="space-y-1">
-        {PRAYER_LABELS.map((prayer, i) => {
+        {visiblePrayers.map((prayer, i) => {
           const isNext = prayer.key === nextPrayer;
           return (
             <motion.div

@@ -66,7 +66,7 @@ export function ShareScheduleCard({ times, city }: ShareScheduleCardProps) {
           ref={cardRef}
           className="rounded-2xl overflow-hidden"
           style={{
-            background: 'linear-gradient(135deg, #0D1B2A 0%, #1B263B 50%, #0D1B2A 100%)',
+            background: 'linear-gradient(135deg, #0A1F14 0%, #132B1E 50%, #0A1F14 100%)',
             padding: '32px 24px',
             width: '360px',
             fontFamily: "'Plus Jakarta Sans', sans-serif",
@@ -75,10 +75,10 @@ export function ShareScheduleCard({ times, city }: ShareScheduleCardProps) {
           <div style={{ textAlign: 'center', marginBottom: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.7 0 3.3-.4 4.7-1.1C13.5 19.3 11 16 11 12s2.5-7.3 5.7-8.9C15.3 2.4 13.7 2 12 2z" fill="#E0AA3E" />
+                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.7 0 3.3-.4 4.7-1.1C13.5 19.3 11 16 11 12s2.5-7.3 5.7-8.9C15.3 2.4 13.7 2 12 2z" fill="#5BB8C4" />
               </svg>
-              <span style={{ color: '#E0AA3E', fontSize: '18px', fontWeight: 800, letterSpacing: '1px' }}>
-                RAMADHAN KAREEM
+              <span style={{ color: '#5BB8C4', fontSize: '18px', fontWeight: 800, letterSpacing: '1px' }}>
+                AKYASH PRO
               </span>
             </div>
             <p style={{ color: '#8899AA', fontSize: '13px' }}>Jadwal Sholat Hari Ini</p>
@@ -87,7 +87,7 @@ export function ShareScheduleCard({ times, city }: ShareScheduleCardProps) {
               <p style={{ color: '#8899AA', fontSize: '11px', marginTop: '4px' }}>{times.hijri}</p>
             )}
           </div>
-          <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, #E0AA3E44, transparent)', marginBottom: '20px' }} />
+          <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, #1B6B3A44, transparent)', marginBottom: '20px' }} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {PRAYER_LABELS.map((p) => (
               <div
@@ -98,20 +98,20 @@ export function ShareScheduleCard({ times, city }: ShareScheduleCardProps) {
                   alignItems: 'center',
                   padding: '10px 16px',
                   borderRadius: '12px',
-                  background: p.key === 'Maghrib' ? '#E0AA3E22' : '#ffffff08',
+                  background: p.key === 'Maghrib' ? '#1B6B3A22' : '#ffffff08',
                 }}
               >
-                <span style={{ color: p.key === 'Maghrib' ? '#E0AA3E' : '#CCDDEE', fontSize: '14px', fontWeight: 600 }}>
+                <span style={{ color: p.key === 'Maghrib' ? '#5BB8C4' : '#CCDDEE', fontSize: '14px', fontWeight: 600 }}>
                   {p.label}
                 </span>
-                <span style={{ color: p.key === 'Maghrib' ? '#E0AA3E' : '#FFFFFF', fontSize: '16px', fontWeight: 700, fontFamily: "'Space Mono', monospace" }}>
+                <span style={{ color: p.key === 'Maghrib' ? '#5BB8C4' : '#FFFFFF', fontSize: '16px', fontWeight: 700, fontFamily: "'Space Mono', monospace" }}>
                   {times[p.key] as string}
                 </span>
               </div>
             ))}
           </div>
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <p style={{ color: '#556677', fontSize: '10px' }}>ramadhantime.lovable.app</p>
+            <p style={{ color: '#556677', fontSize: '10px' }}>akyashpro.app</p>
           </div>
         </div>
       </div>

@@ -20,11 +20,11 @@ export default defineConfig(({ mode }) => ({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'placeholder.svg', 'pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
-        name: 'Ramadhan Time',
-        short_name: 'Ramadhan',
-        description: 'Jadwal Imsakiyah & Countdown Maghrib',
-        theme_color: '#2E7D32',
-        background_color: '#FFF8E7',
+        name: 'Akyash Pro',
+        short_name: 'Akyash',
+        description: 'Muslim Planner',
+        theme_color: '#1B6B3A',
+        background_color: '#F4F7F5',
         display: 'standalone',
         icons: [
           {

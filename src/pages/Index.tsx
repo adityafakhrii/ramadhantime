@@ -5,6 +5,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useLocation } from '@/hooks/useLocation';
 import { usePrayerTimes } from '@/hooks/usePrayerTimes';
 import { useCountdown } from '@/hooks/useCountdown';
+import { useRamadhanMode } from '@/hooks/useRamadhanMode';
 import { SplashScreen } from '@/components/SplashScreen';
 import { CountdownTimer } from '@/components/CountdownTimer';
 import { PrayerSchedule } from '@/components/PrayerSchedule';
@@ -67,6 +68,7 @@ const Index = () => {
   const countdown = useCountdown(todayTimes, location?.timezone);
   const { iftarNotif, sahurNotif, toggleIftar, toggleSahur } = useNotifications();
   const { isInstallable, promptInstall } = usePWA();
+  const { isRamadhan, toggleRamadhan } = useRamadhanMode();
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isAlarmRinging, setIsAlarmRinging] = useState(false);
@@ -89,7 +91,9 @@ const Index = () => {
 
   const isLoading = locLoading || prayerLoading;
 
+  // Alarm effect — only trigger in Ramadhan mode
   useEffect(() => {
+    if (!isRamadhan) return;
     if (countdown?.isZero && !isLoading) {
       const isMaghrib = countdown.label.includes('Buka');
       const isSahur = !isMaghrib;
@@ -113,7 +117,7 @@ const Index = () => {
         }
       }
     }
-  }, [countdown?.isZero, countdown?.label, iftarNotif, sahurNotif, isLoading, stopAlarm]);
+  }, [countdown?.isZero, countdown?.label, iftarNotif, sahurNotif, isLoading, stopAlarm, isRamadhan]);
 
   const handleSplashFinish = useCallback(() => setShowSplash(false), []);
 
@@ -122,11 +126,11 @@ const Index = () => {
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission().then((perm) => {
         if (perm === 'granted') {
-          if (localStorage.getItem('ramadhan-notif-iftar') === null) {
-            localStorage.setItem('ramadhan-notif-iftar', 'true');
+          if (localStorage.getItem('akyash-notif-iftar') === null) {
+            localStorage.setItem('akyash-notif-iftar', 'true');
           }
-          if (localStorage.getItem('ramadhan-notif-sahur') === null) {
-            localStorage.setItem('ramadhan-notif-sahur', 'true');
+          if (localStorage.getItem('akyash-notif-sahur') === null) {
+            localStorage.setItem('akyash-notif-sahur', 'true');
           }
         }
       });
@@ -179,22 +183,29 @@ const Index = () => {
                   <div className="flex items-start justify-between">
                     <div>
                       <h1 className="text-4xl font-extrabold text-foreground leading-tight">
-                        Ramadhan
+                        Akyash
                       </h1>
-                      <h2 className="text-4xl font-extrabold text-foreground leading-tight">
-                        Kareem
+                      <h2 className="text-4xl font-extrabold text-primary leading-tight">
+                        Pro
                       </h2>
                     </div>
-                    {/* Lantern decoration */}
-                    <svg width="50" height="70" viewBox="0 0 50 70" className="text-foreground/60 mt-1">
-                      <line x1="25" y1="0" x2="25" y2="8" stroke="currentColor" strokeWidth="1" />
-                      <path d="M20 5 Q25 0 30 5" fill="none" stroke="currentColor" strokeWidth="1" />
-                      <line x1="25" y1="8" x2="25" y2="18" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M18 18h14v3H18z" fill="currentColor" opacity="0.7" />
-                      <path d="M16 21c0 0 0 24 9 24s9-24 9-24" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M18 45h14v3H18z" fill="currentColor" opacity="0.7" />
-                      {/* Crescent on top */}
-                      <path d="M28 3C26 1 23 1 21 3c1-1 3 0 4 1s2 2 3 0z" fill="currentColor" opacity="0.5" />
+                    {/* Crescent moon + star decoration */}
+                    <svg width="50" height="55" viewBox="0 0 50 55" className="text-primary/30 mt-1">
+                      {/* Crescent moon */}
+                      <path
+                        d="M25 6C15 6 8 14 8 24s7 18 17 18c3.5 0 6.8-1.1 9.5-3C29 37 25 31 25 24S29 11 34.5 9C31.8 7.1 28.5 6 25 6z"
+                        fill="currentColor"
+                        opacity="0.6"
+                      />
+                      {/* Star */}
+                      <path
+                        d="M40 10l1.5 3.2 3.5.5-2.5 2.5.6 3.5-3.1-1.6L36.9 19.7l.6-3.5-2.5-2.5 3.5-.5z"
+                        fill="currentColor"
+                        opacity="0.5"
+                      />
+                      {/* Small decorative dots */}
+                      <circle cx="18" cy="48" r="1.2" fill="currentColor" opacity="0.3" />
+                      <circle cx="35" cy="46" r="0.8" fill="currentColor" opacity="0.2" />
                     </svg>
                   </div>
                   <div className="flex items-center gap-1.5 mt-2 text-sm text-muted-foreground">
@@ -214,7 +225,7 @@ const Index = () => {
                       <div>
                         <h3 className="text-xl font-bold text-foreground">Lokasi Kosong Bang</h3>
                         <p className="text-sm text-muted-foreground mt-2">
-                          Izinin app gue baca lokasi lu, atau set manual dah bair jadwalnya akurat.
+                          Izinin app gue baca lokasi lu, atau set manual dah biar jadwalnya akurat.
                         </p>
                       </div>
                       <button
@@ -229,45 +240,52 @@ const Index = () => {
                   <>
                     <div className="px-5 space-y-5">
                       <RealtimeClock timezone={location.timezone} />
-                      {/* Main Layout: Alert Column & Prayer List Column */}
-                      <div className="grid grid-cols-2 gap-3">
 
-                        {/* Alert Column */}
-                        <div className="flex flex-col gap-3">
-                          {/* Iftar Alert Card */}
-                          <div className="rounded-2xl shadow-neu p-4 bg-background flex-1 flex flex-col justify-between">
-                            <div className="flex items-center justify-between mb-3">
-                              <Sunset className="w-5 h-5 text-foreground" />
-                              <Switch checked={iftarNotif} onCheckedChange={toggleIftar} />
+                      {/* Layout: Ramadhan mode = 2-col grid with alarms, Normal = full-width prayer */}
+                      {isRamadhan ? (
+                        <div className="grid grid-cols-2 gap-3">
+                          {/* Alert Column */}
+                          <div className="flex flex-col gap-3">
+                            {/* Iftar Alert Card */}
+                            <div className="rounded-2xl shadow-neu p-4 bg-background flex-1 flex flex-col justify-between">
+                              <div className="flex items-center justify-between mb-3">
+                                <Sunset className="w-5 h-5 text-foreground" />
+                                <Switch checked={iftarNotif} onCheckedChange={toggleIftar} />
+                              </div>
+                              <div>
+                                <p className="text-4xl font-bold font-mono-timer text-foreground">
+                                  {todayTimes?.Maghrib || '--:--'}
+                                </p>
+                                <p className="text-sm text-muted-foreground mt-1">Alarm Buka</p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-4xl font-bold font-mono-timer text-foreground">
-                                {todayTimes?.Maghrib || '--:--'}
-                              </p>
-                              <p className="text-sm text-muted-foreground mt-1">Alarm Buka</p>
+
+                            {/* Sehar Alert Card */}
+                            <div className="rounded-2xl shadow-neu p-4 bg-background flex-1 flex flex-col justify-between">
+                              <div className="flex items-center justify-between mb-3">
+                                <Moon className="w-5 h-5 text-foreground" />
+                                <Switch checked={sahurNotif} onCheckedChange={toggleSahur} />
+                              </div>
+                              <div>
+                                <p className="text-4xl font-bold font-mono-timer text-foreground">
+                                  {todayTimes?.Imsak || '--:--'}
+                                </p>
+                                <p className="text-sm text-muted-foreground mt-1">Alarm Sahur</p>
+                              </div>
                             </div>
                           </div>
 
-                          {/* Sehar Alert Card */}
-                          <div className="rounded-2xl shadow-neu p-4 bg-background flex-1 flex flex-col justify-between">
-                            <div className="flex items-center justify-between mb-3">
-                              <Moon className="w-5 h-5 text-foreground" />
-                              <Switch checked={sahurNotif} onCheckedChange={toggleSahur} />
-                            </div>
-                            <div>
-                              <p className="text-4xl font-bold font-mono-timer text-foreground">
-                                {todayTimes?.Imsak || '--:--'}
-                              </p>
-                              <p className="text-sm text-muted-foreground mt-1">Alarm Sahur</p>
-                            </div>
+                          {/* Prayer List Card Column */}
+                          <div className="flex flex-col">
+                            {todayTimes && <PrayerSchedule times={todayTimes} timezone={location?.timezone} city={location?.city} isRamadhan={isRamadhan} />}
                           </div>
                         </div>
-
-                        {/* Prayer List Card Column */}
-                        <div className="flex flex-col">
-                          {todayTimes && <PrayerSchedule times={todayTimes} timezone={location?.timezone} city={location?.city} />}
+                      ) : (
+                        /* Normal mode: full-width prayer schedule */
+                        <div>
+                          {todayTimes && <PrayerSchedule times={todayTimes} timezone={location?.timezone} city={location?.city} isRamadhan={isRamadhan} />}
                         </div>
-                      </div>
+                      )}
 
                       {/* Quick Actions / Fitur Lainnya */}
                       <div className="grid grid-cols-3 gap-3">
@@ -300,8 +318,8 @@ const Index = () => {
                         Stay Halal Brother & Sister!
                       </p>
                     </div>
-                    <HabitTracker />
-                    <DailyQuote />
+                    <HabitTracker isRamadhan={isRamadhan} />
+                    <DailyQuote isRamadhan={isRamadhan} />
                   </>
                 )}
               </motion.main>
@@ -315,7 +333,7 @@ const Index = () => {
                 exit={{ opacity: 0 }}
                 className="pt-6"
               >
-                {/* Countdown Section */}
+                {/* Countdown Section — only in Ramadhan mode */}
                 {!location ? (
                   <div className="px-5 mt-10">
                     <div className="rounded-2xl shadow-neu p-8 bg-background flex flex-col items-center justify-center text-center space-y-4">
@@ -325,7 +343,7 @@ const Index = () => {
                       <div>
                         <h3 className="text-xl font-bold text-foreground">Lokasi Kosong Bang</h3>
                         <p className="text-sm text-muted-foreground mt-2">
-                          Lu belum set lokasi, gimana gue mau ngasih liat hitung mundurnya bor.
+                          Lu belum set lokasi, gimana gue mau ngasih liat {isRamadhan ? 'hitung mundurnya' : 'jadwalnya'} bor.
                         </p>
                       </div>
                       <button
@@ -336,7 +354,7 @@ const Index = () => {
                       </button>
                     </div>
                   </div>
-                ) : countdown && !isLoading ? (
+                ) : isRamadhan && countdown && !isLoading ? (
                   <div className="px-5 mb-6">
                     <CountdownTimer
                       hours={countdown.hours}
@@ -379,7 +397,7 @@ const Index = () => {
                     })()}
                   </div>
                 ) : null}
-                {location && <CalendarView monthlyTimes={monthlyTimes} />}
+                {location && <CalendarView monthlyTimes={monthlyTimes} isRamadhan={isRamadhan} />}
               </motion.div>
             )}
 
@@ -417,6 +435,8 @@ const Index = () => {
                   onToggleSahur={toggleSahur}
                   isInstallable={isInstallable}
                   onInstallApp={promptInstall}
+                  isRamadhan={isRamadhan}
+                  onToggleRamadhan={toggleRamadhan}
                 />
               </motion.div>
             )}

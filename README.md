@@ -1,8 +1,8 @@
-# Ramadhan Time
-Aplikasi Asisten Amaliah Ramadhan All-in-One Berbasis PWA
+# Akyash Pro
+Aplikasi Muslim Planner All-in-One Berbasis PWA
 
 ## Tentang Proyek
-Ramadhan Time adalah aplikasi web progresif (Progressive Web App / PWA) yang dirancang untuk menjadi pendamping ibadah umat Muslim, khususnya selama bulan suci Ramadhan. Aplikasi ini dikembangkan dengan pendekatan mobile-first dan antarmuka (UI/UX) modern.
+Akyash Pro adalah aplikasi web progresif (Progressive Web App / PWA) yang dirancang untuk menjadi pendamping ibadah umat Muslim. Aplikasi ini dikembangkan dengan pendekatan mobile-first dan antarmuka (UI/UX) modern.
 
 ## Fitur Utama
 - Jadwal & Countdown Sholat Real-time: Menampilkan jadwal sholat secara presisi berdasarkan deteksi lokasi pengguna dan zona waktu.
@@ -48,7 +48,7 @@ src/
 1. Clone repositori ini:
    ```bash
    git clone <url-repo-anda>
-   cd ramadhantime
+   cd akyash-pro
    ```
 
 2. Instalasi dependensi (mendukung npm, yarn, pnpm, atau bun):
@@ -61,11 +61,11 @@ src/
    npm run dev
    ```
 
-4. Akses proyek melalui `http://localhost:5173` dari browser pilihan Anda.
+4. Akses proyek melalui `http://localhost:8080` dari browser pilihan Anda.
 
 ## Deployment dan Build
 Untuk mempersiapkan environment production:
 ```bash
 npm run build
 ```
-Bundle aplikasi hasil minimasi dan optimalisasi dapat ditemukan di direktori `dist/` (atau direktori keluaran konfigurasi Vite Anda), yang siap didistribusikan ke layanan hosting web statis.
+Bundle aplikasi hasil minimasi dan optimalisasi dapat ditemukan di direktori `dist/`, yang siap didistribusikan ke layanan hosting web statis.

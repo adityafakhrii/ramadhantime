@@ -9,7 +9,7 @@ export interface LocationData {
 
 export function useLocation() {
   const [location, setLocation] = useState<LocationData | null>(() => {
-    const saved = localStorage.getItem('ramadhan-location');
+    const saved = localStorage.getItem('akyash-location');
     return saved ? JSON.parse(saved) : null;
   });
   const [loading, setLoading] = useState(false);
@@ -50,7 +50,7 @@ export function useLocation() {
 
       const loc: LocationData = { latitude, longitude, city, timezone: tz };
       setLocation(loc);
-      localStorage.setItem('ramadhan-location', JSON.stringify(loc));
+      localStorage.setItem('akyash-location', JSON.stringify(loc));
     } catch (err) {
       setError('Izin lokasi ditolak atau gagal. Silakan atur lokasi manual.');
       console.error('Geolocation error:', err);
@@ -89,7 +89,7 @@ export function useLocation() {
           timezone: tz, // explicitly resolved
         };
         setLocation(loc);
-        localStorage.setItem('ramadhan-location', JSON.stringify(loc));
+        localStorage.setItem('akyash-location', JSON.stringify(loc));
       } else {
         setError('Kota tidak ditemukan.');
       }
@@ -102,7 +102,7 @@ export function useLocation() {
 
   useEffect(() => {
     // Try auto-detect on first load if no saved location
-    const saved = localStorage.getItem('ramadhan-location');
+    const saved = localStorage.getItem('akyash-location');
     if (!saved && navigator.geolocation) {
       detectLocation();
     }
@@ -110,7 +110,7 @@ export function useLocation() {
 
   const setResolvedCity = useCallback((loc: LocationData) => {
     setLocation(loc);
-    localStorage.setItem('ramadhan-location', JSON.stringify(loc));
+    localStorage.setItem('akyash-location', JSON.stringify(loc));
   }, []);
 
   return { location, loading, error, detectLocation, setManualCity, setResolvedCity };

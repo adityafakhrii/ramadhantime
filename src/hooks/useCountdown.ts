@@ -95,7 +95,7 @@ export function useCountdown(prayerTimes: PrayerTimesData | null, timezone?: str
     // Only trigger once when countdown hits exactly 00:00:00
     if (state && state.hours === 0 && state.minutes === 0 && state.seconds === 0) {
       const isMaghrib = state.label.includes('Buka');
-      const notifKey = isMaghrib ? 'ramadhan-notif-iftar' : 'ramadhan-notif-sahur';
+      const notifKey = isMaghrib ? 'akyash-notif-iftar' : 'akyash-notif-sahur';
       const isEnabled = localStorage.getItem(notifKey) !== 'false';
 
       if (isEnabled) {

@@ -18,7 +18,7 @@ export interface MonthlyPrayerData {
 }
 
 function getCacheKey(lat: number, lng: number, year: number) {
-  return `ramadhan-prayer-${lat.toFixed(2)}-${lng.toFixed(2)}-${year}`;
+  return `akyash-prayer-${lat.toFixed(2)}-${lng.toFixed(2)}-${year}`;
 }
 
 export function usePrayerTimes(location: LocationData | null) {

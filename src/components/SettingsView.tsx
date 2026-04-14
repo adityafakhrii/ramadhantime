@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Moon, Sun, Bell, MapPin, Search, Download } from 'lucide-react';
+import { Moon, Sun, Bell, MapPin, Search, Download, Sparkles } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,8 @@ interface SettingsViewProps {
   onSelectCity: (loc: { latitude: number; longitude: number; city: string; timezone?: string }) => void;
   isInstallable: boolean;
   onInstallApp: () => void;
+  isRamadhan: boolean;
+  onToggleRamadhan: (val: boolean) => void;
 }
 
 interface CitySuggestion {
@@ -32,7 +34,8 @@ interface CitySuggestion {
 
 export function SettingsView({
   isDark, onToggleTheme, onSearchCity, onDetectLocation, locationLoading, cityName,
-  iftarNotif, sahurNotif, onToggleIftar, onToggleSahur, onSelectCity, isInstallable, onInstallApp
+  iftarNotif, sahurNotif, onToggleIftar, onToggleSahur, onSelectCity, isInstallable, onInstallApp,
+  isRamadhan, onToggleRamadhan
 }: SettingsViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<CitySuggestion[]>([]);
@@ -103,6 +106,22 @@ export function SettingsView({
         </div>
       </div>
 
+      {/* Ramadhan Mode */}
+      <div className="rounded-2xl shadow-neu p-5 bg-background">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Sparkles className="w-5 h-5 text-accent" />
+            <div>
+              <p className="font-semibold text-sm text-foreground">Ramadhan Mode</p>
+              <p className="text-xs text-muted-foreground">
+                {isRamadhan ? 'Fitur Ramadhan aktif 🌙' : 'Tampilkan fitur khusus Ramadhan'}
+              </p>
+            </div>
+          </div>
+          <Switch checked={isRamadhan} onCheckedChange={onToggleRamadhan} />
+        </div>
+      </div>
+
       {/* PWA Install Button */}
       {isInstallable && (
         <div className="rounded-2xl shadow-neu p-5 bg-background">
@@ -121,29 +140,31 @@ export function SettingsView({
         </div>
       )}
 
-      {/* Notifications */}
-      <div className="rounded-2xl shadow-neu p-5 bg-background space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Bell className="w-5 h-5 text-foreground" />
-            <div>
-              <p className="font-semibold text-sm text-foreground">Alarm Buka</p>
-              <p className="text-xs text-muted-foreground">Notifikasi pas Maghrib</p>
+      {/* Notifications — only when Ramadhan Mode is ON */}
+      {isRamadhan && (
+        <div className="rounded-2xl shadow-neu p-5 bg-background space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Bell className="w-5 h-5 text-foreground" />
+              <div>
+                <p className="font-semibold text-sm text-foreground">Alarm Buka</p>
+                <p className="text-xs text-muted-foreground">Notifikasi pas Maghrib</p>
+              </div>
             </div>
+            <Switch checked={iftarNotif} onCheckedChange={onToggleIftar} />
           </div>
-          <Switch checked={iftarNotif} onCheckedChange={onToggleIftar} />
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Bell className="w-5 h-5 text-foreground" />
-            <div>
-              <p className="font-semibold text-sm text-foreground">Alarm Sahur</p>
-              <p className="text-xs text-muted-foreground">Notifikasi pas Subuh/Imsak</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Bell className="w-5 h-5 text-foreground" />
+              <div>
+                <p className="font-semibold text-sm text-foreground">Alarm Sahur</p>
+                <p className="text-xs text-muted-foreground">Notifikasi pas Subuh/Imsak</p>
+              </div>
             </div>
+            <Switch checked={sahurNotif} onCheckedChange={onToggleSahur} />
           </div>
-          <Switch checked={sahurNotif} onCheckedChange={onToggleSahur} />
         </div>
-      </div>
+      )}
 
       {/* Location */}
       <div className="rounded-2xl shadow-neu p-5 bg-background space-y-3">

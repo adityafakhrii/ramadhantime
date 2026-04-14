@@ -8,6 +8,7 @@ import type { MonthlyPrayerData } from '@/hooks/usePrayerTimes';
 
 interface CalendarViewProps {
   monthlyTimes: MonthlyPrayerData;
+  isRamadhan?: boolean;
 }
 
 const PRAYER_ORDER = ['Imsak', 'Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'] as const;
@@ -16,9 +17,14 @@ const PRAYER_LABELS: Record<string, string> = {
   Asr: 'Asr', Maghrib: 'Maghrib', Isha: 'Isha',
 };
 
-export function CalendarView({ monthlyTimes }: CalendarViewProps) {
+export function CalendarView({ monthlyTimes, isRamadhan = false }: CalendarViewProps) {
   const captureRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
+
+  // Filter prayer columns based on mode
+  const visiblePrayers = isRamadhan
+    ? PRAYER_ORDER
+    : PRAYER_ORDER.filter(k => k !== 'Imsak');
 
   const exportAsImage = async () => {
     if (!captureRef.current) return;
@@ -26,7 +32,6 @@ export function CalendarView({ monthlyTimes }: CalendarViewProps) {
       setIsExporting(true);
       toast.loading("Menyiapkan gambar jadwal...", { id: "export-jadwal" });
 
-      // Temporarily add padding to make the image look good
       const originalPb = captureRef.current.style.paddingBottom;
       captureRef.current.style.paddingBottom = '32px';
 
@@ -36,13 +41,12 @@ export function CalendarView({ monthlyTimes }: CalendarViewProps) {
         backgroundColor: window.getComputedStyle(document.body).backgroundColor,
       });
 
-      // Revert styling
       captureRef.current.style.paddingBottom = originalPb;
 
       const image = canvas.toDataURL("image/png");
       const a = document.createElement("a");
       a.href = image;
-      a.download = `Jadwal-Imsakiyah-Ramadhan.png`;
+      a.download = isRamadhan ? `Jadwal-Imsakiyah-Akyash.png` : `Jadwal-Sholat-Akyash.png`;
       a.click();
 
       toast.success("Gambar berhasil disimpan!", { id: "export-jadwal" });
@@ -54,13 +58,22 @@ export function CalendarView({ monthlyTimes }: CalendarViewProps) {
     }
   };
 
-  const entries = Object.entries(monthlyTimes).filter(([date]) => {
-    const [d, m] = date.split('-').map(Number);
-    // Ramadhan window: Feb 19 to Mar 20
-    if (m === 2 && d >= 19) return true;
-    if (m === 3 && d <= 20) return true;
-    return false;
-  }).sort(([a], [b]) => {
+  let entries: [string, (typeof monthlyTimes)[string]][];
+
+  if (isRamadhan) {
+    // Ramadhan window filter: Feb 19 to Mar 20
+    entries = Object.entries(monthlyTimes).filter(([date]) => {
+      const [d, m] = date.split('-').map(Number);
+      if (m === 2 && d >= 19) return true;
+      if (m === 3 && d <= 20) return true;
+      return false;
+    });
+  } else {
+    // Show all entries for current month
+    entries = Object.entries(monthlyTimes);
+  }
+
+  entries.sort(([a], [b]) => {
     const [da, ma, ya] = a.split('-').map(Number);
     const [db, mb, yb] = b.split('-').map(Number);
     return new Date(ya, ma - 1, da).getTime() - new Date(yb, mb - 1, db).getTime();
@@ -81,7 +94,9 @@ export function CalendarView({ monthlyTimes }: CalendarViewProps) {
     <ScrollArea className="h-[calc(100vh-10rem)]">
       <div className="px-4 pt-2">
         <div className="flex items-center justify-between mb-4 mt-2">
-          <h2 className="text-xl font-bold text-foreground">Jadwal Imsakiyah</h2>
+          <h2 className="text-xl font-bold text-foreground">
+            {isRamadhan ? 'Jadwal Imsakiyah' : 'Jadwal Sholat Bulanan'}
+          </h2>
           <button
             onClick={exportAsImage}
             disabled={isExporting}
@@ -128,7 +143,7 @@ export function CalendarView({ monthlyTimes }: CalendarViewProps) {
                 )}
               </div>
               <div className="grid grid-cols-3 gap-2">
-                {PRAYER_ORDER.map(key => (
+                {visiblePrayers.map(key => (
                   <div key={key} className="text-center">
                     <p className="text-[10px] text-muted-foreground">{PRAYER_LABELS[key]}</p>
                     <p className="text-xs font-semibold font-mono-timer text-foreground">

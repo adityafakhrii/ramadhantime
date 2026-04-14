@@ -47,7 +47,7 @@ export const QuranView = ({ onFocusModeChange }: QuranViewProps) => {
 
     useEffect(() => {
         // Load last read
-        const stored = localStorage.getItem('ramadhan-last-read');
+        const stored = localStorage.getItem('akyash-last-read');
         if (stored) {
             try {
                 setLastRead(JSON.parse(stored));
@@ -92,7 +92,7 @@ export const QuranView = ({ onFocusModeChange }: QuranViewProps) => {
     const saveLastRead = (surahNomor: number, ayatNomor: number, surahNama: string) => {
         const data = { surah: surahNomor, ayat: ayatNomor, nama: surahNama };
         setLastRead(data);
-        localStorage.setItem('ramadhan-last-read', JSON.stringify(data));
+        localStorage.setItem('akyash-last-read', JSON.stringify(data));
     };
 
     const playAudio = (url: string) => {

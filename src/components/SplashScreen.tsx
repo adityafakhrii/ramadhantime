@@ -23,55 +23,67 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6 }}
         >
-          {/* Crescent Moon */}
+          {/* Akyash Pro Logo — stylized "a" with swooping curve */}
           <motion.div
             initial={{ scale: 0, rotate: -90 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: 'spring', stiffness: 100, damping: 15, delay: 0.2 }}
             className="relative mb-8"
           >
-            <svg width="120" height="120" viewBox="0 0 120 120" className="text-foreground">
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+              {/* Outer swooping arc — teal */}
               <motion.path
-                d="M60 10C32.4 10 10 32.4 10 60s22.4 50 50 50c8.3 0 16.1-2 23-5.6C68.8 96.8 58 80 58 60s10.8-36.8 25-44.4C76.1 12 68.3 10 60 10z"
-                fill="currentColor"
+                d="M60 10C32 10 10 32 10 60s22 50 50 50c12 0 23-4 32-11"
+                stroke="hsl(185, 30%, 52%)"
+                strokeWidth="6"
+                strokeLinecap="round"
+                fill="none"
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: 1 }}
                 transition={{ duration: 1.2, ease: 'easeInOut' }}
               />
-              {/* Star */}
+              {/* Inner stylized "a" — forest green */}
+              <motion.path
+                d="M60 35c-14 0-25 11-25 25s11 25 25 25c8 0 15-4 20-10V50c0-8-6-15-15-15"
+                stroke="hsl(153, 32%, 42%)"
+                strokeWidth="5"
+                strokeLinecap="round"
+                fill="none"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 1, ease: 'easeInOut', delay: 0.3 }}
+              />
+              {/* Accent dot — teal */}
               <motion.circle
-                cx="88"
-                cy="28"
-                r="3"
-                fill="currentColor"
+                cx="85"
+                cy="30"
+                r="5"
+                fill="hsl(185, 30%, 52%)"
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 1, duration: 0.3 }}
               />
-              <motion.circle
-                cx="96"
-                cy="40"
-                r="2"
-                fill="currentColor"
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.2, duration: 0.3 }}
-              />
             </svg>
           </motion.div>
 
-          {/* Lantern */}
+          {/* Decorative crescent moon + star (generic Islamic) */}
           <motion.div
             initial={{ y: -40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}
             className="absolute top-12 right-12"
           >
-            <svg width="40" height="60" viewBox="0 0 40 60" className="text-foreground/30">
-              <line x1="20" y1="0" x2="20" y2="15" stroke="currentColor" strokeWidth="1.5" />
-              <path d="M12 15h16v3H12z" fill="currentColor" />
-              <path d="M10 18c0 0 0 22 10 22s10-22 10-22" fill="none" stroke="currentColor" strokeWidth="1.5" />
-              <path d="M12 40h16v3H12z" fill="currentColor" />
+            <svg width="40" height="40" viewBox="0 0 40 40" className="text-foreground/15">
+              {/* Crescent moon */}
+              <path
+                d="M20 4C12 4 6 10 6 18s6 14 14 14c3 0 5.8-1 8-2.5C23.5 27.5 20 23 20 18s3.5-9.5 8-11.5C25.8 5 23 4 20 4z"
+                fill="currentColor"
+              />
+              {/* Star */}
+              <path
+                d="M32 8l1.2 2.5L36 11l-2 2 .5 3-2.5-1.3L29.5 16l.5-3-2-2 2.8-.5z"
+                fill="currentColor"
+              />
             </svg>
           </motion.div>
 
@@ -82,15 +94,15 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
             transition={{ delay: 0.8, duration: 0.6 }}
             className="text-3xl font-extrabold text-foreground tracking-tight"
           >
-            Ramadhan
+            Akyash
           </motion.h1>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1, duration: 0.6 }}
-            className="text-3xl font-extrabold text-foreground tracking-tight"
+            className="text-3xl font-extrabold text-primary tracking-tight"
           >
-            Kareem
+            Pro
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
@@ -98,7 +110,7 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
             transition={{ delay: 1.4, duration: 0.5 }}
             className="mt-3 text-sm text-muted-foreground"
           >
-            Jadwal Imsakiyah & Countdown
+            Muslim Planner
           </motion.p>
         </motion.div>
       ) : null}

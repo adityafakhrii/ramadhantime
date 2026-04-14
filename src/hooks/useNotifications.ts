@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
 
 export function useNotifications() {
-    const [iftarNotif, setIftarNotif] = useState(() => localStorage.getItem('ramadhan-notif-iftar') !== 'false');
-    const [sahurNotif, setSahurNotif] = useState(() => localStorage.getItem('ramadhan-notif-sahur') !== 'false');
+    const [iftarNotif, setIftarNotif] = useState(() => localStorage.getItem('akyash-notif-iftar') !== 'false');
+    const [sahurNotif, setSahurNotif] = useState(() => localStorage.getItem('akyash-notif-sahur') !== 'false');
 
     const requestPermission = async () => {
         if ('Notification' in window) {
@@ -18,7 +18,7 @@ export function useNotifications() {
             if (!granted) return;
         }
         setIftarNotif(enabled);
-        localStorage.setItem('ramadhan-notif-iftar', String(enabled));
+        localStorage.setItem('akyash-notif-iftar', String(enabled));
     };
 
     const toggleSahur = async (enabled: boolean) => {
@@ -27,7 +27,7 @@ export function useNotifications() {
             if (!granted) return;
         }
         setSahurNotif(enabled);
-        localStorage.setItem('ramadhan-notif-sahur', String(enabled));
+        localStorage.setItem('akyash-notif-sahur', String(enabled));
     };
 
     return { iftarNotif, sahurNotif, toggleIftar, toggleSahur };

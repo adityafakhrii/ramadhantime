@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 
 export function useTheme() {
   const [isDark, setIsDark] = useState(() => {
-    const saved = localStorage.getItem('ramadhan-theme');
+    const saved = localStorage.getItem('akyash-theme');
     if (saved) return saved === 'dark';
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
@@ -14,7 +14,7 @@ export function useTheme() {
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem('ramadhan-theme', isDark ? 'dark' : 'light');
+    localStorage.setItem('akyash-theme', isDark ? 'dark' : 'light');
   }, [isDark]);
 
   const toggle = useCallback(() => setIsDark(prev => !prev), []);
