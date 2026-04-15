@@ -318,11 +318,22 @@ const Index = () => {
                         Stay Halal Brother & Sister!
                       </p>
                     </div>
-                    <HabitTracker isRamadhan={isRamadhan} />
                     <DailyQuote isRamadhan={isRamadhan} />
                   </>
                 )}
               </motion.main>
+            )}
+
+            {activeTab === 'ibadah' && (
+              <motion.div
+                key="ibadah"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="pt-6"
+              >
+                <HabitTracker isRamadhan={isRamadhan} />
+              </motion.div>
             )}
 
             {activeTab === 'calendar' && (
