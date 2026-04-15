@@ -142,7 +142,7 @@ export function CalendarView({ monthlyTimes, isRamadhan = false }: CalendarViewP
                   </span>
                 </div>
                 {isToday && (
-                  <span className="text-[10px] bg-foreground text-background px-3 py-1 rounded-full font-semibold">
+                  <span className="text-[10px] bg-primary text-primary-foreground px-3 py-1 rounded-full font-semibold">
                     Hari Ini
                   </span>
                 )}

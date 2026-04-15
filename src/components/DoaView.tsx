@@ -13,6 +13,51 @@ import { TasbihCounter } from "@/components/TasbihCounter";
 
 type DoaTab = 'doa' | 'tasbih';
 
+/** Exported standalone doa list for embedding in combined views */
+export const DoaListView = () => {
+    return (
+        <ScrollArea className="h-full">
+            <div className="space-y-8 pb-10 px-4">
+                {DOA_CATEGORIES.map((cat) => (
+                    <section key={cat.title}>
+                        <h3 className="text-base font-bold text-foreground mb-3 px-1 border-l-4 border-primary pl-3 sticky top-0 bg-background/95 backdrop-blur py-2 z-10">
+                            {cat.title}
+                        </h3>
+                        <Accordion type="single" collapsible className="w-full space-y-3">
+                            {cat.items.map((doa) => (
+                                <AccordionItem
+                                    key={doa.id}
+                                    value={doa.id}
+                                    className="bg-muted/30 rounded-2xl border border-border/50 px-2"
+                                >
+                                    <AccordionTrigger className="hover:no-underline px-3 py-4 text-left font-semibold text-foreground flex gap-3 text-sm">
+                                        <span>{doa.title}</span>
+                                    </AccordionTrigger>
+                                    <AccordionContent className="px-3 pb-4 space-y-4">
+                                        <div className="pt-2 text-right">
+                                            <p className="text-2xl leading-loose font-arabic text-foreground font-medium" dir="rtl">
+                                                {doa.arab}
+                                            </p>
+                                        </div>
+                                        <div className="space-y-2 border-t border-border/50 pt-4">
+                                            <p className="text-sm text-primary italic leading-relaxed">
+                                                {doa.latin}
+                                            </p>
+                                            <p className="text-sm text-muted-foreground leading-relaxed">
+                                                "{doa.arti}"
+                                            </p>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            ))}
+                        </Accordion>
+                    </section>
+                ))}
+            </div>
+        </ScrollArea>
+    );
+};
+
 export const DoaView = () => {
     const [tab, setTab] = useState<DoaTab>('doa');
 
@@ -38,7 +83,7 @@ export const DoaView = () => {
                 <button
                     onClick={() => setTab('doa')}
                     className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                        tab === 'doa' ? 'bg-foreground text-background shadow-neu-sm' : 'bg-muted/30 text-muted-foreground'
+                        tab === 'doa' ? 'bg-primary text-primary-foreground shadow-lg' : 'bg-muted/30 text-muted-foreground'
                     }`}
                 >
                     Kumpulan Doa
@@ -46,7 +91,7 @@ export const DoaView = () => {
                 <button
                     onClick={() => setTab('tasbih')}
                     className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                        tab === 'tasbih' ? 'bg-foreground text-background shadow-neu-sm' : 'bg-muted/30 text-muted-foreground'
+                        tab === 'tasbih' ? 'bg-primary text-primary-foreground shadow-lg' : 'bg-muted/30 text-muted-foreground'
                     }`}
                 >
                     Tasbih Digital
@@ -55,45 +100,7 @@ export const DoaView = () => {
 
             <div className="flex-1 overflow-hidden">
                 {tab === 'doa' ? (
-                    <ScrollArea className="h-full">
-                        <div className="space-y-8 pb-10">
-                            {DOA_CATEGORIES.map((cat) => (
-                                <section key={cat.title}>
-                                    <h3 className="text-base font-bold text-foreground mb-3 px-1 border-l-4 border-primary pl-3 sticky top-0 bg-background/95 backdrop-blur py-2 z-10">
-                                        {cat.title}
-                                    </h3>
-                                    <Accordion type="single" collapsible className="w-full space-y-3">
-                                        {cat.items.map((doa) => (
-                                            <AccordionItem
-                                                key={doa.id}
-                                                value={doa.id}
-                                                className="bg-muted/30 rounded-2xl border border-border/50 px-2"
-                                            >
-                                                <AccordionTrigger className="hover:no-underline px-3 py-4 text-left font-semibold text-foreground flex gap-3 text-sm">
-                                                    <span>{doa.title}</span>
-                                                </AccordionTrigger>
-                                                <AccordionContent className="px-3 pb-4 space-y-4">
-                                                    <div className="pt-2 text-right">
-                                                        <p className="text-2xl leading-loose font-arabic text-foreground font-medium" dir="rtl">
-                                                            {doa.arab}
-                                                        </p>
-                                                    </div>
-                                                    <div className="space-y-2 border-t border-border/50 pt-4">
-                                                        <p className="text-sm text-primary italic leading-relaxed">
-                                                            {doa.latin}
-                                                        </p>
-                                                        <p className="text-sm text-muted-foreground leading-relaxed">
-                                                            "{doa.arti}"
-                                                        </p>
-                                                    </div>
-                                                </AccordionContent>
-                                            </AccordionItem>
-                                        ))}
-                                    </Accordion>
-                                </section>
-                            ))}
-                        </div>
-                    </ScrollArea>
+                    <DoaListView />
                 ) : (
                     <ScrollArea className="h-full w-full">
                         <div className="flex flex-col items-center pb-20 px-2">

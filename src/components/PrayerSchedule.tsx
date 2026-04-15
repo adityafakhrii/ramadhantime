@@ -54,14 +54,14 @@ export function PrayerSchedule({ times, timezone, city, isRamadhan = false }: Pr
               transition={{ delay: i * 0.05 }}
               className={`
                 flex items-center justify-between py-2.5 px-3 rounded-xl transition-all
-                ${isNext ? 'bg-foreground text-background' : ''}
+                ${isNext ? 'bg-primary text-primary-foreground' : ''}
               `}
             >
-              <span className={`text-sm font-medium ${isNext ? 'text-background' : 'text-foreground'}`}>
+              <span className={`text-sm font-medium ${isNext ? 'text-primary-foreground' : 'text-foreground'}`}>
                 {prayer.label}
               </span>
               <div className="flex items-center gap-2">
-                <span className={`text-sm font-mono-timer font-semibold ${isNext ? 'text-background' : 'text-foreground'}`}>
+                <span className={`text-sm font-mono-timer font-semibold ${isNext ? 'text-primary-foreground' : 'text-foreground'}`}>
                   {times[prayer.key] as string}
                 </span>
               </div>

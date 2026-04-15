@@ -28,9 +28,10 @@ interface SurahDetail extends Surah {
 
 interface QuranViewProps {
     onFocusModeChange?: (isFocus: boolean) => void;
+    embedded?: boolean;
 }
 
-export const QuranView = ({ onFocusModeChange }: QuranViewProps) => {
+export const QuranView = ({ onFocusModeChange, embedded = false }: QuranViewProps) => {
     const [surahs, setSurahs] = useState<Surah[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -116,6 +117,8 @@ export const QuranView = ({ onFocusModeChange }: QuranViewProps) => {
     // Derived classes for Focus Mode
     const containerClass = isFocusMode
         ? "fixed inset-0 z-50 bg-background flex flex-col pt-8 pb-4 px-4"
+        : embedded
+        ? "px-4 pb-20 h-full flex flex-col"
         : "pt-6 px-4 pb-20 h-[calc(100vh-4rem)]";
 
     return (
@@ -129,7 +132,8 @@ export const QuranView = ({ onFocusModeChange }: QuranViewProps) => {
                         exit={{ opacity: 0, x: -20 }}
                         className="h-full flex flex-col"
                     >
-                        <div className="flex items-center gap-3 mb-6">
+                        {!embedded && (
+                          <div className="flex items-center gap-3 mb-6">
                             <div className="p-3 bg-primary/10 rounded-xl text-primary flex-shrink-0">
                                 <Book className="w-6 h-6" />
                             </div>
@@ -137,7 +141,8 @@ export const QuranView = ({ onFocusModeChange }: QuranViewProps) => {
                                 <h2 className="text-2xl font-bold text-foreground">Al-Quran</h2>
                                 <p className="text-sm text-muted-foreground">Baca Kapanpun di Manapun</p>
                             </div>
-                        </div>
+                          </div>
+                        )}
 
                         {lastRead && (
                             <div

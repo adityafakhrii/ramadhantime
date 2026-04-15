@@ -15,8 +15,8 @@ import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { BottomNav, type TabType } from '@/components/BottomNav';
 import { Switch } from '@/components/ui/switch';
 import { RealtimeClock } from '@/components/RealtimeClock';
-import { DoaView } from '@/components/DoaView';
-import { QuranView } from '@/components/QuranView';
+import { QuranDoaView } from '@/components/QuranDoaView';
+import { ForumView } from '@/components/ForumView';
 import { ZakatView } from '@/components/ZakatView';
 import { QiblaView } from '@/components/QiblaView';
 import { PWAPrompt } from '@/components/PWAPrompt';
@@ -230,7 +230,7 @@ const Index = () => {
                       </div>
                       <button
                         onClick={() => setActiveTab('settings')}
-                        className="mt-2 px-6 py-2.5 rounded-xl bg-foreground text-background font-semibold text-sm hover:opacity-90 transition-opacity"
+                        className="mt-2 px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity"
                       >
                         Gass Atur Lokasi
                       </button>
@@ -359,7 +359,7 @@ const Index = () => {
                       </div>
                       <button
                         onClick={() => setActiveTab('settings')}
-                        className="mt-2 px-6 py-2.5 rounded-xl bg-foreground text-background font-semibold text-sm hover:opacity-90 transition-opacity"
+                        className="mt-2 px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity"
                       >
                         Gass Atur Lokasi
                       </button>
@@ -412,16 +412,15 @@ const Index = () => {
               </motion.div>
             )}
 
-            {activeTab === 'doa' && (
-              <DoaView key="doa" />
-            )}
-
-            {activeTab === 'quran' && (
-              <QuranView key="quran" onFocusModeChange={(focus) => {
-                // Hide/show bottom nav based on focus mode
+            {activeTab === 'qurandoa' && (
+              <QuranDoaView key="qurandoa" onFocusModeChange={(focus) => {
                 const nav = document.getElementById('bottom-nav');
                 if (nav) nav.style.display = focus ? 'none' : '';
               }} />
+            )}
+
+            {activeTab === 'forum' && (
+              <ForumView key="forum" />
             )}
 
             {activeTab === 'settings' && (

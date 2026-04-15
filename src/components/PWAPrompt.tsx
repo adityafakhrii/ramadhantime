@@ -34,7 +34,7 @@ export function PWAPrompt({ isInstallable, onInstall }: PWAPromptProps) {
                     className="fixed bottom-24 left-4 right-4 max-w-lg mx-auto z-50 bg-background rounded-2xl p-4 shadow-neu flex items-center justify-between"
                 >
                     <div className="flex items-center gap-3">
-                        <div className="bg-foreground text-background p-2 rounded-xl">
+                        <div className="bg-primary text-primary-foreground p-2 rounded-xl">
                             <Download className="w-5 h-5" />
                         </div>
                         <div>
