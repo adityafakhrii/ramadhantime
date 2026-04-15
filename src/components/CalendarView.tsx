@@ -69,8 +69,13 @@ export function CalendarView({ monthlyTimes, isRamadhan = false }: CalendarViewP
       return false;
     });
   } else {
-    // Show all entries for current month
-    entries = Object.entries(monthlyTimes);
+    // Show only entries for the current running month
+    const currentMonth = new Date().getMonth() + 1;
+    const currentYear = new Date().getFullYear();
+    entries = Object.entries(monthlyTimes).filter(([date]) => {
+      const [, m, y] = date.split('-').map(Number);
+      return m === currentMonth && y === currentYear;
+    });
   }
 
   entries.sort(([a], [b]) => {
@@ -95,7 +100,7 @@ export function CalendarView({ monthlyTimes, isRamadhan = false }: CalendarViewP
       <div className="px-4 pt-2">
         <div className="flex items-center justify-between mb-4 mt-2">
           <h2 className="text-xl font-bold text-foreground">
-            {isRamadhan ? 'Jadwal Imsakiyah' : 'Jadwal Sholat Bulanan'}
+            {isRamadhan ? 'Jadwal Imsakiyah' : `Jadwal Sholat — ${['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][new Date().getMonth()]} ${new Date().getFullYear()}`}
           </h2>
           <button
             onClick={exportAsImage}

@@ -1,4 +1,4 @@
-import { Home, Timer, Settings, BookOpen, BookOpenText } from 'lucide-react';
+import { Home, Timer, MoreHorizontal, BookOpen, BookOpenText } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export type TabType = 'home' | 'calendar' | 'doa' | 'quran' | 'settings';
@@ -13,7 +13,7 @@ const tabs = [
   { id: 'calendar' as TabType, label: 'Jadwal', icon: Timer },
   { id: 'doa' as TabType, label: 'Doa', icon: BookOpen },
   { id: 'quran' as TabType, label: 'Al-Quran', icon: BookOpenText },
-  { id: 'settings' as TabType, label: 'Pengaturan', icon: Settings },
+  { id: 'settings' as TabType, label: 'Lainnya', icon: MoreHorizontal },
 ];
 
 export function BottomNav({ active, onChange }: BottomNavProps) {

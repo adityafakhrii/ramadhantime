@@ -3,6 +3,7 @@ import { Moon, Sun, Bell, MapPin, Search, Download, Sparkles } from 'lucide-reac
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { DonationView } from '@/components/DonationView';
 
 interface SettingsViewProps {
   isDark: boolean;
@@ -90,7 +91,10 @@ export function SettingsView({
 
   return (
     <div className="px-4 pb-28 pt-2 space-y-4 max-w-lg mx-auto">
-      <h2 className="text-lg font-bold text-foreground">Settings</h2>
+      <h2 className="text-lg font-bold text-foreground">Lainnya</h2>
+
+      {/* Donation */}
+      <DonationView />
 
       {/* Theme */}
       <div className="rounded-2xl shadow-neu p-5 bg-background">
