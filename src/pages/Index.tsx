@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { MapPin, Sunset, Moon, Compass, Calculator, Map } from 'lucide-react';
+import { MapPin, Sunset, Moon, Compass, Calculator, Map, Timer, Bot } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/hooks/useTheme';
 import { useLocation } from '@/hooks/useLocation';
@@ -17,6 +17,9 @@ import { Switch } from '@/components/ui/switch';
 import { RealtimeClock } from '@/components/RealtimeClock';
 import { QuranDoaView } from '@/components/QuranDoaView';
 import { ForumView } from '@/components/ForumView';
+import { StoreView } from '@/components/StoreView';
+import { ProfileMenu } from '@/components/ProfileMenu';
+import { AIChatView } from '@/components/AIChatView';
 import { ZakatView } from '@/components/ZakatView';
 import { QiblaView } from '@/components/QiblaView';
 import { PWAPrompt } from '@/components/PWAPrompt';
@@ -57,11 +60,12 @@ const getNextPrayer = (times: PrayerTimesData | null, timezone?: string) => {
   return { name: 'Imsak', time: times.Imsak };
 };
 
-export type ExtendedTabType = TabType | 'qibla' | 'zakat';
+export type ExtendedTabType = TabType | 'calendar' | 'qibla' | 'zakat' | 'settings';
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [activeTab, setActiveTab] = useState<ExtendedTabType>('home');
+  const [showChat, setShowChat] = useState(false);
   const { isDark, toggle: toggleTheme } = useTheme();
   const { location, loading: locLoading, detectLocation, setManualCity, setResolvedCity } = useLocation();
   const { todayTimes, monthlyTimes, loading: prayerLoading } = usePrayerTimes(location);
@@ -189,24 +193,12 @@ const Index = () => {
                         Pro
                       </h2>
                     </div>
-                    {/* Crescent moon + star decoration */}
-                    <svg width="50" height="55" viewBox="0 0 50 55" className="text-primary/30 mt-1">
-                      {/* Crescent moon */}
-                      <path
-                        d="M25 6C15 6 8 14 8 24s7 18 17 18c3.5 0 6.8-1.1 9.5-3C29 37 25 31 25 24S29 11 34.5 9C31.8 7.1 28.5 6 25 6z"
-                        fill="currentColor"
-                        opacity="0.6"
-                      />
-                      {/* Star */}
-                      <path
-                        d="M40 10l1.5 3.2 3.5.5-2.5 2.5.6 3.5-3.1-1.6L36.9 19.7l.6-3.5-2.5-2.5 3.5-.5z"
-                        fill="currentColor"
-                        opacity="0.5"
-                      />
-                      {/* Small decorative dots */}
-                      <circle cx="18" cy="48" r="1.2" fill="currentColor" opacity="0.3" />
-                      <circle cx="35" cy="46" r="0.8" fill="currentColor" opacity="0.2" />
-                    </svg>
+                    {/* Profile menu button (replaces crescent moon) */}
+                    <ProfileMenu
+                      isDark={isDark}
+                      onToggleTheme={toggleTheme}
+                      onOpenSettings={() => setActiveTab('settings')}
+                    />
                   </div>
                   <div className="flex items-center gap-1.5 mt-2 text-sm text-muted-foreground">
                     <MapPin className="w-3.5 h-3.5" />
@@ -288,13 +280,20 @@ const Index = () => {
                       )}
 
                       {/* Quick Actions / Fitur Lainnya */}
-                      <div className="grid grid-cols-3 gap-3">
+                      <div className="grid grid-cols-4 gap-3">
+                        <button
+                          onClick={() => setActiveTab('calendar')}
+                          className="flex flex-col items-center justify-center p-3 rounded-2xl bg-background shadow-neu-sm hover:opacity-80 transition-opacity"
+                        >
+                          <Timer className="w-6 h-6 text-primary mb-2" />
+                          <span className="text-xs font-semibold text-foreground">Jadwal</span>
+                        </button>
                         <button
                           onClick={() => setActiveTab('qibla')}
                           className="flex flex-col items-center justify-center p-3 rounded-2xl bg-background shadow-neu-sm hover:opacity-80 transition-opacity"
                         >
                           <Compass className="w-6 h-6 text-primary mb-2" />
-                          <span className="text-xs font-semibold text-foreground">Arah Kiblat</span>
+                          <span className="text-xs font-semibold text-foreground">Kiblat</span>
                         </button>
                         <button
                           onClick={() => setActiveTab('zakat')}
@@ -311,7 +310,6 @@ const Index = () => {
                           <span className="text-xs font-semibold text-foreground">Masjid</span>
                         </button>
                       </div>
-
 
                       {/* Greeting */}
                       <p className="text-center text-xs text-muted-foreground italic pb-2">
@@ -423,6 +421,10 @@ const Index = () => {
               <ForumView key="forum" />
             )}
 
+            {activeTab === 'store' && (
+              <StoreView key="store" />
+            )}
+
             {activeTab === 'settings' && (
               <motion.div
                 key="settings"
@@ -462,6 +464,19 @@ const Index = () => {
         </div>
 
         <BottomNav active={activeTab as TabType} onChange={setActiveTab as (tab: TabType) => void} />
+
+        {/* Floating AI Chatbot Button */}
+        <motion.button
+          onClick={() => setShowChat(true)}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="fixed bottom-20 right-4 z-50 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-xl flex items-center justify-center hover:opacity-90 transition-opacity"
+        >
+          <Bot className="w-6 h-6" />
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center animate-pulse">AI</span>
+        </motion.button>
+
+        <AIChatView open={showChat} onClose={() => setShowChat(false)} />
       </div>
     </>
   );

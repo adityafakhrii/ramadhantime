@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Heart,
@@ -9,18 +9,26 @@ import {
   Send,
   Plus,
   X,
-  ChevronLeft,
   HandHeart,
+  CheckCircle2,
+  Loader2,
 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { FORUM_POSTS, type ForumPost, type ForumComment } from '@/data/forum';
 import { toast } from 'sonner';
 
-const CATEGORY_LABELS: Record<ForumPost['category'], { label: string; color: string }> = {
-  doa: { label: '🤲 Doa', color: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' },
-  status: { label: '✨ Status', color: 'bg-blue-500/15 text-blue-600 dark:text-blue-400' },
-  sharing: { label: '📖 Sharing', color: 'bg-amber-500/15 text-amber-600 dark:text-amber-400' },
-  tausiyah: { label: '🕌 Tausiyah', color: 'bg-purple-500/15 text-purple-600 dark:text-purple-400' },
+const CATEGORY_LABELS: Record<ForumPost['category'], { label: string; color: string; emoji: string }> = {
+  doa: { label: '🤲 Doa', color: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400', emoji: '🤲' },
+  status: { label: '✨ Status', color: 'bg-blue-500/15 text-blue-600 dark:text-blue-400', emoji: '✨' },
+  sharing: { label: '📖 Sharing', color: 'bg-amber-500/15 text-amber-600 dark:text-amber-400', emoji: '📖' },
+  tausiyah: { label: '🕌 Tausiyah', color: 'bg-purple-500/15 text-purple-600 dark:text-purple-400', emoji: '🕌' },
+};
+
+const CATEGORY_SUCCESS_MSG: Record<ForumPost['category'], string> = {
+  doa: 'Doa kamu telah dibagikan, semoga dikabulkan! 🤲',
+  status: 'Status berhasil diposting! ✨',
+  sharing: 'Sharing kamu telah dipublikasikan! 📖',
+  tausiyah: 'Tausiyah berhasil dibagikan, semoga bermanfaat! 🕌',
 };
 
 export const ForumView = () => {
@@ -32,6 +40,16 @@ export const ForumView = () => {
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostCategory, setNewPostCategory] = useState<ForumPost['category']>('status');
+  const [isPosting, setIsPosting] = useState(false);
+  const [successPost, setSuccessPost] = useState<ForumPost | null>(null);
+
+  // Auto-dismiss success popup
+  useEffect(() => {
+    if (successPost) {
+      const timer = setTimeout(() => setSuccessPost(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [successPost]);
 
   const handleDoa = useCallback((postId: string) => {
     setLikedPosts(prev => {
@@ -100,23 +118,30 @@ export const ForumView = () => {
 
   const handleCreatePost = useCallback(() => {
     if (!newPostContent.trim()) return;
-    const post: ForumPost = {
-      id: `new-post-${Date.now()}`,
-      userId: 'user-me',
-      userName: 'Saya',
-      userAvatar: '😊',
-      content: newPostContent.trim(),
-      category: newPostCategory,
-      timestamp: 'Baru saja',
-      doaCount: 0,
-      commentCount: 0,
-      shareCount: 0,
-      comments: [],
-    };
-    setPosts(prev => [post, ...prev]);
-    setNewPostContent('');
-    setShowCreatePost(false);
-    toast('Berhasil diposting! 🎉');
+
+    setIsPosting(true);
+
+    // Simulate posting delay for realistic feel
+    setTimeout(() => {
+      const post: ForumPost = {
+        id: `new-post-${Date.now()}`,
+        userId: 'user-me',
+        userName: 'Saya',
+        userAvatar: '😊',
+        content: newPostContent.trim(),
+        category: newPostCategory,
+        timestamp: 'Baru saja',
+        doaCount: 0,
+        commentCount: 0,
+        shareCount: 0,
+        comments: [],
+      };
+      setPosts(prev => [post, ...prev]);
+      setNewPostContent('');
+      setIsPosting(false);
+      setShowCreatePost(false);
+      setSuccessPost(post);
+    }, 1200);
   }, [newPostContent, newPostCategory]);
 
   return (
@@ -182,38 +207,56 @@ export const ForumView = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end justify-center"
-            onClick={() => setShowCreatePost(false)}
+            className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-end justify-center"
+            onClick={() => !isPosting && setShowCreatePost(false)}
           >
             <motion.div
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-background rounded-t-3xl w-full max-w-lg p-6 pb-10 shadow-2xl"
+              className="bg-background rounded-t-3xl w-full max-w-lg p-6 pb-24 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Drag handle */}
+              <div className="flex justify-center mb-4">
+                <div className="w-10 h-1 bg-muted-foreground/20 rounded-full" />
+              </div>
+
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-foreground">Buat Postingan</h3>
                 <button
-                  onClick={() => setShowCreatePost(false)}
-                  className="p-2 bg-muted/50 rounded-full text-muted-foreground hover:bg-muted transition-colors"
+                  onClick={() => !isPosting && setShowCreatePost(false)}
+                  disabled={isPosting}
+                  className="p-2 bg-muted/50 rounded-full text-muted-foreground hover:bg-muted transition-colors disabled:opacity-50"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
+              {/* User preview */}
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-base select-none">
+                  😊
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-foreground">Saya</p>
+                  <p className="text-[10px] text-muted-foreground">Akan diposting ke Forum</p>
+                </div>
+              </div>
+
               {/* Category selector */}
               <div className="flex gap-2 mb-4 flex-wrap">
-                {(Object.entries(CATEGORY_LABELS) as [ForumPost['category'], { label: string; color: string }][]).map(([key, val]) => (
+                {(Object.entries(CATEGORY_LABELS) as [ForumPost['category'], { label: string; color: string; emoji: string }][]).map(([key, val]) => (
                   <button
                     key={key}
-                    onClick={() => setNewPostCategory(key)}
+                    onClick={() => !isPosting && setNewPostCategory(key)}
+                    disabled={isPosting}
                     className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                       newPostCategory === key
                         ? 'bg-primary text-primary-foreground shadow-lg'
                         : 'bg-muted/30 text-muted-foreground'
-                    }`}
+                    } disabled:opacity-60`}
                   >
                     {val.label}
                   </button>
@@ -224,16 +267,111 @@ export const ForumView = () => {
                 value={newPostContent}
                 onChange={(e) => setNewPostContent(e.target.value)}
                 placeholder="Tulis doa, status, atau sharing kamu..."
-                className="w-full h-32 bg-muted/20 rounded-2xl p-4 text-foreground text-sm placeholder:text-muted-foreground/50 resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 border border-border/30"
+                disabled={isPosting}
+                className="w-full h-32 bg-muted/20 rounded-2xl p-4 text-foreground text-sm placeholder:text-muted-foreground/50 resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 border border-border/30 disabled:opacity-60"
               />
 
               <button
                 onClick={handleCreatePost}
-                disabled={!newPostContent.trim()}
-                className="w-full mt-4 py-3 bg-primary text-primary-foreground rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                disabled={!newPostContent.trim() || isPosting}
+                className="w-full mt-4 py-3 bg-primary text-primary-foreground rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex items-center justify-center gap-2"
               >
-                Posting
+                {isPosting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Memposting...
+                  </>
+                ) : (
+                  'Posting'
+                )}
               </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Success Popup Overlay */}
+      <AnimatePresence>
+        {successPost && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[70] flex items-center justify-center px-6"
+            onClick={() => setSuccessPost(null)}
+          >
+            {/* Subtle backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+            />
+            {/* Success card */}
+            <motion.div
+              initial={{ scale: 0.7, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: -20 }}
+              transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+              className="relative bg-background rounded-3xl p-6 w-full max-w-sm shadow-2xl border border-border/30"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Success icon */}
+              <div className="flex justify-center mb-4">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: 'spring', delay: 0.15, damping: 12 }}
+                  className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center"
+                >
+                  <CheckCircle2 className="w-9 h-9 text-primary" />
+                </motion.div>
+              </div>
+
+              {/* Category badge */}
+              <div className="flex justify-center mb-3">
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${CATEGORY_LABELS[successPost.category].color}`}>
+                  {CATEGORY_LABELS[successPost.category].label}
+                </span>
+              </div>
+
+              {/* Title */}
+              <h3 className="text-center text-lg font-bold text-foreground mb-1">
+                Berhasil Diposting!
+              </h3>
+              <p className="text-center text-sm text-muted-foreground mb-4">
+                {CATEGORY_SUCCESS_MSG[successPost.category]}
+              </p>
+
+              {/* Post preview */}
+              <div className="bg-muted/20 rounded-2xl p-4 mb-4 border border-border/20">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs select-none">
+                    😊
+                  </div>
+                  <span className="text-xs font-bold text-foreground">Saya</span>
+                  <span className="text-[10px] text-muted-foreground">• Baru saja</span>
+                </div>
+                <p className="text-xs text-foreground/80 leading-relaxed line-clamp-3">
+                  {successPost.content}
+                </p>
+              </div>
+
+              {/* Dismiss button */}
+              <button
+                onClick={() => setSuccessPost(null)}
+                className="w-full py-2.5 bg-primary text-primary-foreground rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity"
+              >
+                Lihat di Forum
+              </button>
+
+              {/* Auto-dismiss progress bar */}
+              <motion.div
+                initial={{ scaleX: 1 }}
+                animate={{ scaleX: 0 }}
+                transition={{ duration: 3, ease: 'linear' }}
+                className="mt-3 h-0.5 bg-primary/30 rounded-full origin-left"
+              />
             </motion.div>
           </motion.div>
         )}
