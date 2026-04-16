@@ -465,16 +465,18 @@ const Index = () => {
 
         <BottomNav active={activeTab as TabType} onChange={setActiveTab as (tab: TabType) => void} />
 
-        {/* Floating AI Chatbot Button */}
-        <motion.button
-          onClick={() => setShowChat(true)}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className="fixed bottom-20 right-4 z-50 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-xl flex items-center justify-center hover:opacity-90 transition-opacity"
-        >
-          <Bot className="w-6 h-6" />
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center animate-pulse">AI</span>
-        </motion.button>
+        {/* Floating AI Chatbot Button — only on Home */}
+        {activeTab === 'home' && (
+          <motion.button
+            onClick={() => setShowChat(true)}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="fixed bottom-20 right-4 z-50 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-xl flex items-center justify-center hover:opacity-90 transition-opacity"
+          >
+            <Bot className="w-6 h-6" />
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center animate-pulse">AI</span>
+          </motion.button>
+        )}
 
         <AIChatView open={showChat} onClose={() => setShowChat(false)} />
       </div>

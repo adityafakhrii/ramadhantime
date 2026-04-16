@@ -112,8 +112,14 @@ export const HabitTracker = ({ isRamadhan = false }: HabitTrackerProps) => {
         }
     };
 
+    const prevProgressRef = useRef(progress);
+
     useEffect(() => {
-        if (progress === 100 && habits.length > 0) {
+        const prev = prevProgressRef.current;
+        prevProgressRef.current = progress;
+
+        // Only fire confetti when progress transitions TO 100% (not when already at 100%)
+        if (progress === 100 && prev < 100 && habits.length > 0) {
             setShowCongrats(true);
 
             const end = Date.now() + 2 * 1000;
@@ -139,6 +145,8 @@ export const HabitTracker = ({ isRamadhan = false }: HabitTrackerProps) => {
                     requestAnimationFrame(frame);
                 }
             }());
+        } else if (progress === 100) {
+            setShowCongrats(true);
         } else {
             setShowCongrats(false);
         }
