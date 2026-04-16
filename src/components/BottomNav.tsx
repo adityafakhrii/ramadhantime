@@ -1,7 +1,7 @@
-import { Home, Timer, MoreHorizontal, BookOpenText, CheckSquare, Users } from 'lucide-react';
+import { Home, CheckSquare, BookOpenText, Users, ShoppingBag } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export type TabType = 'home' | 'calendar' | 'ibadah' | 'qurandoa' | 'forum' | 'settings';
+export type TabType = 'home' | 'ibadah' | 'qurandoa' | 'forum' | 'store';
 
 interface BottomNavProps {
   active: TabType;
@@ -10,11 +10,10 @@ interface BottomNavProps {
 
 const tabs = [
   { id: 'home' as TabType, label: 'Beranda', icon: Home },
-  { id: 'calendar' as TabType, label: 'Jadwal', icon: Timer },
   { id: 'ibadah' as TabType, label: 'Ibadah', icon: CheckSquare },
   { id: 'qurandoa' as TabType, label: "Qur'an & Do'a", icon: BookOpenText },
   { id: 'forum' as TabType, label: 'Forum', icon: Users },
-  { id: 'settings' as TabType, label: 'Lainnya', icon: MoreHorizontal },
+  { id: 'store' as TabType, label: 'Store', icon: ShoppingBag },
 ];
 
 export function BottomNav({ active, onChange }: BottomNavProps) {
