@@ -108,8 +108,8 @@ export const StoreView = () => {
 
             {/* Category filters */}
             <div className="px-4 shrink-0">
-              <ScrollArea className="w-full">
-                <div className="flex gap-2 pb-3">
+              <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
+                <div className="flex gap-2 pb-3 w-max">
                   <button onClick={() => setSelectedCategory('all')} className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${selectedCategory === 'all' ? 'bg-primary text-primary-foreground shadow-lg' : 'bg-muted/30 text-muted-foreground'}`}>
                     🏪 Semua
                   </button>
@@ -119,7 +119,7 @@ export const StoreView = () => {
                     </button>
                   ))}
                 </div>
-              </ScrollArea>
+              </div>
             </div>
 
             {/* Product grid */}
@@ -371,14 +371,14 @@ export const StoreView = () => {
 
             {/* Status tabs */}
             <div className="px-4 shrink-0">
-              <ScrollArea className="w-full">
-                <div className="flex gap-2 pb-3">
+              <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
+                <div className="flex gap-2 pb-3 w-max">
                   <button onClick={() => setOrdersTab('all')} className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${ordersTab === 'all' ? 'bg-primary text-primary-foreground shadow-lg' : 'bg-muted/30 text-muted-foreground'}`}>Semua</button>
                   {(Object.entries(ORDER_STATUS_INFO) as [OrderStatus, { label: string }][]).map(([key, val]) => (
                     <button key={key} onClick={() => setOrdersTab(key)} className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${ordersTab === key ? 'bg-primary text-primary-foreground shadow-lg' : 'bg-muted/30 text-muted-foreground'}`}>{val.label}</button>
                   ))}
                 </div>
-              </ScrollArea>
+              </div>
             </div>
 
             <div className="flex-1 overflow-hidden px-4">
