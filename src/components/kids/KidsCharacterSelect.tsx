@@ -66,35 +66,6 @@ const KidsCharacterSelect: FC<Props> = ({ onSelect }) => {
                 </div>
             </div>
 
-            {/* Bottom Nav Placeholder for selection screen */}
-            <div className="absolute bottom-0 w-full bg-[#525146] py-3 flex justify-evenly px-4 z-40 border-t items-end rounded-t-2xl shadow-[0_-10px_20px_rgba(0,0,0,0.15)]">
-                <div className="flex flex-col items-center text-white/50 text-xs gap-1 font-medium pb-2">
-                    <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-inner">
-                        <div className="w-10 h-10 rounded-full bg-amber-500 shadow-md flex items-center justify-center">
-                            <Moon className="w-5 h-5 text-white fill-white" />
-                        </div>
-                    </div>
-                    Hari ini
-                </div>
-                <div className="flex flex-col items-center text-white/50 text-xs gap-1 font-medium pb-2">
-                    <div className="w-10 h-10 rounded-full bg-red-600 shadow-md flex items-center justify-center">
-                        <BookOpen className="w-5 h-5 text-white" />
-                    </div>
-                    Belajar
-                </div>
-                <div className="flex flex-col items-center text-white/50 text-xs gap-1 font-medium pb-2">
-                    <div className="w-10 h-10 rounded-full bg-blue-500 shadow-md flex items-center justify-center">
-                        <Gamepad2 className="w-5 h-5 text-white" />
-                    </div>
-                    Bermain
-                </div>
-                <div className="flex flex-col items-center text-white/50 text-xs gap-1 font-medium pb-2">
-                    <div className="w-10 h-10 rounded-full bg-amber-400 shadow-md flex items-center justify-center">
-                        <Palette className="w-5 h-5 text-white" />
-                    </div>
-                    Berkarya
-                </div>
-            </div>
         </div>
     );
 };
