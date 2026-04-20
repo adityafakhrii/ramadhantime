@@ -30,35 +30,37 @@ const KidsCharacterSelect: FC<Props> = ({ onSelect }) => {
 
             {/* Left side: Mili */}
             <div
-                className="flex-1 cursor-pointer flex items-center justify-end relative group px-2 pb-16"
+                className="flex-1 cursor-pointer flex items-center justify-end relative group px-2 pb-16 overflow-hidden"
                 onClick={() => onSelect('mili')}
             >
-                <div className="absolute inset-0 bg-[#e6d0c2] group-hover:bg-[#dabeaf] transition-colors duration-300"></div>
+                <img src="/kids/bg_mili_kamar.png" className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#e6d0c2] via-transparent to-white/20 opacity-90 transition-colors duration-300"></div>
                 {/* Image for Mili Character */}
-                <div className="z-10 w-full h-[80%] flex flex-col items-center justify-center transform transition group-hover:scale-105 relative">
+                <div className="z-10 w-full h-[80%] flex flex-col items-center justify-center transform transition group-hover:scale-105 relative mt-10">
                     <img
                         src="/kids/mili.png"
                         alt="Mili"
-                        className="w-full h-full object-contain mix-blend-multiply drop-shadow-xl saturate-110"
+                        className="w-full h-full object-contain mix-blend-multiply saturate-110"
                     />
-                    <div className="absolute text-white font-black text-3xl bottom-4 tracking-widest drop-shadow-md">Mili</div>
+                    <div className="absolute text-white font-black text-4xl bottom-0 tracking-widest drop-shadow-md" style={{ textShadow: '0 4px 8px rgba(0,0,0,0.3)' }}>Mili</div>
                 </div>
             </div>
 
             {/* Right side: Tan */}
             <div
-                className="flex-1 cursor-pointer flex items-center justify-start relative border-l-4 border-white/40 group px-2 pb-16"
+                className="flex-1 cursor-pointer flex items-center justify-start relative border-l-4 border-white/40 group px-2 pb-16 overflow-hidden"
                 onClick={() => onSelect('tan')}
             >
-                <div className="absolute inset-0 bg-[#7d7c71] group-hover:bg-[#6c6b61] transition-colors duration-300"></div>
+                <img src="/kids/bg_tan_kamar.png" className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#525146] via-transparent to-black/20 opacity-90 transition-colors duration-300"></div>
                 {/* Image for Tan Character Graphic */}
-                <div className="z-10 w-full h-[80%] flex flex-col items-center justify-center transform transition group-hover:scale-105 relative">
+                <div className="z-10 w-full h-[80%] flex flex-col items-center justify-center transform transition group-hover:scale-105 relative mt-10">
                     <img
                         src="/kids/tan.png"
                         alt="Tan"
-                        className="w-full h-full object-contain mix-blend-multiply drop-shadow-xl saturate-110"
+                        className="w-full h-full object-contain mix-blend-multiply saturate-110"
                     />
-                    <div className="absolute text-white font-black text-3xl bottom-4 tracking-widest drop-shadow-md">Tan</div>
+                    <div className="absolute text-white font-black text-4xl bottom-0 tracking-widest drop-shadow-md" style={{ textShadow: '0 4px 8px rgba(0,0,0,0.3)' }}>Tan</div>
                 </div>
             </div>
 
