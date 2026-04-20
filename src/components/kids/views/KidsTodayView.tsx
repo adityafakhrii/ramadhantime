@@ -23,7 +23,7 @@ const KidsTodayView: FC<Props> = ({ character }) => {
     const isMili = character === 'mili';
     const bgList = backgrounds[character || 'tan'];
     const [bgIndex, setBgIndex] = useState(0);
-    const [showBubble, setShowBubble] = useState(false);
+    const [showBubble, setShowBubble] = useState(true);
 
     const prevBg = () => setBgIndex((prev) => (prev > 0 ? prev - 1 : bgList.length - 1));
     const nextBg = () => setBgIndex((prev) => (prev < bgList.length - 1 ? prev + 1 : 0));
@@ -31,7 +31,7 @@ const KidsTodayView: FC<Props> = ({ character }) => {
     const getCharacterImage = (char: string, bgId: string) => {
         if (char === 'tan') {
             if (bgId === 'bola') return '/kids/tan_bola.png';
-            if (bgId === 'dokter') return '/kids/tan_dokter.png?v=2';
+            if (bgId === 'dokter') return '/kids/tan_dokter.png?v=3';
             return '/kids/tan.png?v=2';
         } else {
             if (bgId === 'bandara') return '/kids/mili_bandara.png';

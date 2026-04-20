@@ -10,14 +10,18 @@ async function processImage() {
     const data = image.bitmap.data;
 
     // Looser tolerance for off-white colors
-    const isWhite = (idx) => data[idx] > 220 && data[idx + 1] > 220 && data[idx + 2] > 220 && data[idx + 3] > 0;
+    const isWhite = (idx) => data[idx] > 200 && data[idx + 1] > 200 && data[idx + 2] > 200 && data[idx + 3] > 0;
 
-    // Seed the stack with the ENTIRE perimeter to beat border artifacts
+    // Seed points safely inside the image to bypass thin borders
     const stack = [];
-    for (let x = 0; x < w; x++) { stack.push([x, 0]); stack.push([x, h - 1]); }
-    for (let y = 0; y < h; y++) { stack.push([0, y]); stack.push([w - 1, y]); }
+    stack.push([20, 20]);
+    stack.push([w - 20, 20]);
+    stack.push([20, h - 20]);
+    stack.push([w - 20, h - 20]);
+    stack.push([Math.floor(w / 2), 20]);
 
     const visited = new Uint8Array(w * h);
+    let removed = 0;
 
     while (stack.length > 0) {
         const [x, y] = stack.pop();
@@ -30,6 +34,7 @@ async function processImage() {
         const idx = pos * 4;
         if (isWhite(idx)) {
             data[idx + 3] = 0; // make transparent
+            removed++;
 
             stack.push([x + 1, y]);
             stack.push([x - 1, y]);
@@ -39,6 +44,6 @@ async function processImage() {
     }
 
     await image.writeAsync(`./public/kids/${file}`);
-    console.log(`Finished ${file}`);
+    console.log(`Finished ${file}. Removed ${removed} white pixels.`);
 }
 processImage();
