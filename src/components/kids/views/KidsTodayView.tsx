@@ -78,13 +78,13 @@ const KidsTodayView: FC<Props> = ({ character }) => {
                     <img
                         src={getCharacterImage('mili', currentBg.id)}
                         alt="Mili"
-                        className="w-64 h-auto object-contain mix-blend-multiply saturate-110"
+                        className="w-64 h-auto object-contain saturate-110 filter drop-shadow-[0_15px_15px_rgba(0,0,0,0.4)] transition-transform hover:scale-105 duration-300 relative z-20"
                     />
                 ) : (
                     <img
                         src={getCharacterImage('tan', currentBg.id)}
                         alt="Tan"
-                        className="w-64 h-auto object-contain mix-blend-multiply saturate-110"
+                        className="w-64 h-auto object-contain saturate-110 filter drop-shadow-[0_15px_15px_rgba(0,0,0,0.4)] transition-transform hover:scale-105 duration-300 relative z-20"
                     />
                 )}
             </div>

@@ -22,10 +22,12 @@ const KidsCharacterSelect: FC<Props> = ({ onSelect }) => {
 
             {/* Title */}
             <div className="absolute top-16 w-full flex justify-center z-40 pointer-events-none">
-                <h1 className="text-5xl font-extrabold text-amber-800 drop-shadow-md tracking-wider flex items-center gap-2" style={{ fontFamily: 'cursive' }}>
-                    <span>Mili</span>
-                    <span className="text-slate-700 font-serif">Tan</span>
-                </h1>
+                <div className="bg-white/90 backdrop-blur-md px-8 py-3 rounded-full shadow-lg border-[3px] border-white/60">
+                    <h1 className="text-5xl font-extrabold flex items-center gap-2 drop-shadow-sm" style={{ fontFamily: 'cursive' }}>
+                        <span className="text-amber-800">Mili</span>
+                        <span className="text-slate-700 font-serif">Tan</span>
+                    </h1>
+                </div>
             </div>
 
             {/* Left side: Mili */}
@@ -36,13 +38,13 @@ const KidsCharacterSelect: FC<Props> = ({ onSelect }) => {
                 <img src="/kids/bg_mili_kamar.png" className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#e6d0c2] via-transparent to-white/20 opacity-90 transition-colors duration-300"></div>
                 {/* Image for Mili Character */}
-                <div className="z-10 w-full h-[80%] flex flex-col items-center justify-center transform transition group-hover:scale-105 relative mt-10">
+                <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center pt-20">
                     <img
                         src="/kids/mili.png"
                         alt="Mili"
-                        className="w-full h-full object-contain mix-blend-multiply saturate-110"
+                        className="w-full h-[70%] object-contain saturate-110 transform transition group-hover:scale-105 filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)]"
                     />
-                    <div className="absolute text-white font-black text-4xl bottom-0 tracking-widest drop-shadow-md" style={{ textShadow: '0 4px 8px rgba(0,0,0,0.3)' }}>Mili</div>
+                    <div className="text-white font-black text-4xl mt-2 tracking-widest drop-shadow-md" style={{ textShadow: '0 4px 8px rgba(0,0,0,0.3)' }}>Mili</div>
                 </div>
             </div>
 
@@ -54,13 +56,13 @@ const KidsCharacterSelect: FC<Props> = ({ onSelect }) => {
                 <img src="/kids/bg_tan_kamar.png" className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#525146] via-transparent to-black/20 opacity-90 transition-colors duration-300"></div>
                 {/* Image for Tan Character Graphic */}
-                <div className="z-10 w-full h-[80%] flex flex-col items-center justify-center transform transition group-hover:scale-105 relative mt-10">
+                <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center pt-20">
                     <img
                         src="/kids/tan.png"
                         alt="Tan"
-                        className="w-full h-full object-contain mix-blend-multiply saturate-110"
+                        className="w-full h-[70%] object-contain saturate-110 transform transition group-hover:scale-105 filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)]"
                     />
-                    <div className="absolute text-white font-black text-4xl bottom-0 tracking-widest drop-shadow-md" style={{ textShadow: '0 4px 8px rgba(0,0,0,0.3)' }}>Tan</div>
+                    <div className="text-white font-black text-4xl mt-2 tracking-widest drop-shadow-md" style={{ textShadow: '0 4px 8px rgba(0,0,0,0.3)' }}>Tan</div>
                 </div>
             </div>
 
