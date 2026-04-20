@@ -1,0 +1,110 @@
+import { FC, useState } from 'react';
+import { KidsCharacter } from '@/pages/KidsMode';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
+interface Props {
+    character: KidsCharacter;
+}
+
+const backgrounds = {
+    tan: [
+        { id: 'kamar', name: 'Kamar Tidur', image: '/kids/bg_tan_kamar.png' },
+        { id: 'bola', name: 'Lap bola', image: '/kids/bg_tan_bola.png' },
+        { id: 'dokter', name: 'Ruang Dokter', image: '/kids/bg_tan_dokter.png' }
+    ],
+    mili: [
+        { id: 'kamar', name: 'Kamar Tidur', image: '/kids/bg_mili_kamar.png' },
+        { id: 'bandara', name: 'Bandara', image: '/kids/bg_mili_bandara.png' },
+        { id: 'dapur', name: 'Dapur', image: '/kids/bg_mili_dapur.png' }
+    ]
+};
+
+const KidsTodayView: FC<Props> = ({ character }) => {
+    const isMili = character === 'mili';
+    const bgList = backgrounds[character || 'tan'];
+    const [bgIndex, setBgIndex] = useState(0);
+    const [showBubble, setShowBubble] = useState(false);
+
+    const prevBg = () => setBgIndex((prev) => (prev > 0 ? prev - 1 : bgList.length - 1));
+    const nextBg = () => setBgIndex((prev) => (prev < bgList.length - 1 ? prev + 1 : 0));
+
+    const getCharacterImage = (char: string, bgId: string) => {
+        if (char === 'tan') {
+            if (bgId === 'bola') return '/kids/tan_bola.png';
+            if (bgId === 'dokter') return '/kids/tan_dokter.png';
+            return '/kids/tan.png';
+        } else {
+            if (bgId === 'bandara') return '/kids/mili_bandara.png';
+            if (bgId === 'dapur') return '/kids/mili_dapur.png';
+            return '/kids/mili.png';
+        }
+    };
+
+    const currentBg = bgList[bgIndex];
+
+    return (
+        <div className={`absolute inset-0 flex items-center justify-center bg-white`}>
+            <img
+                key={currentBg.id}
+                src={currentBg.image}
+                alt={currentBg.name}
+                className="absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-500 animate-in fade-in"
+            />
+
+            {/* Background Name Indicator */}
+            <div className="absolute top-28 w-full flex justify-center z-10 pointer-events-none">
+                <div className="bg-white/95 backdrop-blur-md px-8 py-2.5 rounded-full shadow-lg border-2 border-white/50">
+                    <h2 className="text-xl font-black text-slate-800 uppercase tracking-widest drop-shadow-sm">{currentBg.name}</h2>
+                </div>
+            </div>
+
+            {/* Controls for swipe/carousel */}
+            <button onClick={prevBg} className="absolute left-2 z-30 p-2 text-white/50 hover:text-white transition-colors drop-shadow-md">
+                <ChevronLeft className="w-12 h-12" />
+            </button>
+            <button onClick={nextBg} className="absolute right-2 z-30 p-2 text-white/50 hover:text-white transition-colors drop-shadow-md">
+                <ChevronRight className="w-12 h-12" />
+            </button>
+
+            {/* Character Graphic */}
+            <div className="z-20 transform transition-transform hover:scale-105 duration-300 relative mt-24 cursor-pointer" onClick={() => setShowBubble(!showBubble)}>
+                {/* Speech Bubble Reminder Prototype */}
+                <div className={`absolute -top-16 -right-12 bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-xl border-2 border-slate-200 transition-all duration-300 origin-bottom-left ${showBubble ? 'scale-100 opacity-100' : 'scale-0 opacity-0'} z-50`}>
+                    <p className="text-sm font-bold text-slate-800">Sudah Tadarus<br />hari ini?</p>
+                    <div className="absolute -bottom-2 left-6 w-4 h-4 bg-white/95 border-b-2 border-r-2 border-slate-200 transform rotate-45"></div>
+                </div>
+
+                {isMili ? (
+                    <img
+                        src={getCharacterImage('mili', currentBg.id)}
+                        alt="Mili"
+                        className="w-64 h-auto object-contain mix-blend-multiply drop-shadow-2xl saturate-110"
+                    />
+                ) : (
+                    <img
+                        src={getCharacterImage('tan', currentBg.id)}
+                        alt="Tan"
+                        className="w-64 h-auto object-contain mix-blend-multiply drop-shadow-2xl saturate-110"
+                    />
+                )}
+            </div>
+
+            {/* Sidebar widget */}
+            <div className="absolute right-4 top-1/4 flex flex-col gap-4 z-40">
+                <SideButton label="Tadarus" color="bg-[#78b368]" />
+                <SideButton label="Shaum" color="bg-[#568cc3]" />
+                <SideButton label="Tabungan" color="bg-[#6b7ba9]" />
+            </div>
+        </div>
+    );
+};
+
+function SideButton({ label, color }: { label: string, color: string }) {
+    return (
+        <div className={`w-14 h-14 rounded-full ${color} shadow-lg border-[3px] border-white/60 flex flex-col items-center justify-center text-white cursor-pointer hover:scale-110 transition-transform active:scale-95`}>
+            <span className="text-[9px] font-bold text-center tracking-wider px-1">{label}</span>
+        </div>
+    )
+}
+
+export default KidsTodayView;

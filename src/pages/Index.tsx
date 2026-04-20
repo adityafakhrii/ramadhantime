@@ -279,6 +279,22 @@ const Index = () => {
                         </div>
                       )}
 
+                      {/* Akyash Kids Banner */}
+                      <button
+                        onClick={() => window.location.href = '/kids'}
+                        className="w-full bg-gradient-to-r from-amber-400 to-orange-400 rounded-2xl p-4 shadow-neu-sm flex items-center justify-between cursor-pointer hover:opacity-90 transition-opacity text-left text-white"
+                      >
+                        <div>
+                          <h3 className="font-extrabold text-2xl flex items-center gap-2 drop-shadow-sm" style={{ fontFamily: 'cursive' }}>
+                            Akyash Kids <span className="bg-white text-[10px] px-2 py-1 rounded-full text-amber-600 font-sans font-black tracking-widest shadow-sm shadow-amber-900/10 uppercase">Baru</span>
+                          </h3>
+                          <p className="text-white/90 text-xs font-medium mt-1 leading-snug pr-4">Belajar adab dan ibadah makin seru bersama Mili dan Tan!</p>
+                        </div>
+                        <div className="w-14 h-14 bg-white/20 backdrop-blur rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-2xl" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>🧸</span>
+                        </div>
+                      </button>
+
                       {/* Quick Actions / Fitur Lainnya */}
                       <div className="grid grid-cols-4 gap-3">
                         <button
