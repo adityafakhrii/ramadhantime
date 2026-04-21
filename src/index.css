@@ -142,4 +142,16 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  @keyframes talk-bounce {
+    0%, 100% {
+      transform: translateY(0) scale(1.05);
+    }
+    50% {
+      transform: translateY(-15px) scale(1.05);
+    }
+  }
+  .animate-talk {
+    animation: talk-bounce 1s ease-in-out infinite;
+  }
 }

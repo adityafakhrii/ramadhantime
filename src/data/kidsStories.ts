@@ -24,24 +24,39 @@ export const KIDS_STORIES: Story[] = [
         pages: [
             {
                 id: 1,
-                text: 'Suatu hari yang cerah, Ahmad sedang asyik berjalan-jalan memakan roti kesukaannya.',
+                text: 'Suatu hari yang cerah, Ahmad berjalan-jalan di taman desa. Ia membawa bekal sepotong roti.',
                 image: '/kids/story1_scene1.png'
             },
             {
                 id: 2,
-                text: 'Tiba-tiba, Ahmad melihat seekor anak kucing oranye di pinggir jalan. Meong... Meong... Kucing itu tampak sangat lapar.',
-                image: '/kids/story1_scene1.png' // scene 1 reused to establish conflict
+                text: 'Angin sepoi-sepoi bertiup sejuk. Ahmad bersenandung riang karena hari ini ia sangat gembira.',
+                image: '/kids/story1_scene1.png'
             },
             {
                 id: 3,
-                text: 'Ahmad merasa kasihan. Ia mematahkan separuh rotinya dan memberikannya kepada si kucing.',
-                image: '/kids/story1_scene2.png'
+                text: 'Tiba-tiba, dari balik semak-semak terdengar suara yang sangat pelan. "Meong... Meong..."',
+                image: '/kids/story1_scene1.png'
             },
             {
                 id: 4,
-                text: 'Nyam, nyam, nyam! Kucing itu makan dengan sangat lahap. Ahmad pun tersenyum bahagia.',
-                image: '/kids/story1_scene3.png',
-                moralMessage: 'Siapa yang menyayangi makhluk di bumi, niscaya akan disayangi oleh penduduk langit. Walau hanya dengan separuh roti, sedekah itu sangat berharga!'
+                text: 'Seekor anak kucing kecil berwarna oranye keluar. Badannya kurus dan ia tampak sangat kelaparan.',
+                image: '/kids/story1_scene1.png'
+            },
+            {
+                id: 5,
+                text: 'Kucing itu menggosokkan badannya ke kaki Ahmad sambil terus mengeong dengan nada yang menyedihkan.',
+                image: '/kids/story1_scene1.png'
+            },
+            {
+                id: 6,
+                text: 'Ahmad merasa kasihan. Walaupun itu roti kesukaannya, ia mematahkan separuh rotinya untuk si kucing.',
+                image: '/kids/story1_scene1.png'
+            },
+            {
+                id: 7,
+                text: 'Nyam, nyam, nyam! Kucing itu makan lahap sekali. Ahmad tersenyum lebar melihat kucing itu kembali ceria.',
+                image: '/kids/story1_scene1.png',
+                moralMessage: 'Siapa yang menyayangi makhluk di bumi, niscaya disayangi oleh penduduk langit. Walau hanya dengan separuh roti, sedekah itu sangat berharga!'
             }
         ]
     }

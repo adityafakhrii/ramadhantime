@@ -1,5 +1,6 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { KidsCharacter } from '@/pages/KidsMode';
+import { TalkingCharacterModule } from './TalkingCharacterModule';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Props {
@@ -24,6 +25,17 @@ const KidsTodayView: FC<Props> = ({ character }) => {
     const bgList = backgrounds[character || 'tan'];
     const [bgIndex, setBgIndex] = useState(0);
     const [showBubble, setShowBubble] = useState(true);
+    const [isCharacterSpeaking, setIsCharacterSpeaking] = useState(false);
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (showBubble) {
+            timer = setTimeout(() => {
+                setShowBubble(false);
+            }, 3000);
+        }
+        return () => clearTimeout(timer);
+    }, [showBubble]);
 
     const prevBg = () => setBgIndex((prev) => (prev > 0 ? prev - 1 : bgList.length - 1));
     const nextBg = () => setBgIndex((prev) => (prev < bgList.length - 1 ? prev + 1 : 0));
@@ -89,16 +101,22 @@ const KidsTodayView: FC<Props> = ({ character }) => {
                     <img
                         src={getCharacterImage('mili', currentBg.id)}
                         alt="Mili"
-                        className="w-[20rem] sm:w-[24rem] md:w-[28rem] h-auto object-contain saturate-110 filter drop-shadow-[0_15px_15px_rgba(0,0,0,0.4)] transition-transform hover:scale-105 duration-300 relative z-20"
+                        className={`w-[20rem] sm:w-[24rem] md:w-[28rem] h-auto object-contain saturate-110 filter drop-shadow-[0_15px_15px_rgba(0,0,0,0.4)] transition-transform duration-300 relative z-20 ${isCharacterSpeaking ? 'animate-talk' : 'hover:scale-105'}`}
                     />
                 ) : (
                     <img
                         src={getCharacterImage('tan', currentBg.id)}
                         alt="Tan"
-                        className="w-[20rem] sm:w-[24rem] md:w-[28rem] h-auto object-contain saturate-110 filter drop-shadow-[0_15px_15px_rgba(0,0,0,0.4)] transition-transform hover:scale-105 duration-300 relative z-20"
+                        className={`w-[20rem] sm:w-[24rem] md:w-[28rem] h-auto object-contain saturate-110 filter drop-shadow-[0_15px_15px_rgba(0,0,0,0.4)] transition-transform duration-300 relative z-20 ${isCharacterSpeaking ? 'animate-talk' : 'hover:scale-105'}`}
                     />
                 )}
             </div>
+
+            {/* Talking Character Voice Interactor */}
+            <TalkingCharacterModule
+                character={character || 'tan'}
+                onSpeakingChange={setIsCharacterSpeaking}
+            />
 
             {/* Sidebar widget */}
             <div className="absolute right-4 top-1/4 flex flex-col gap-4 z-40">
