@@ -1,4 +1,5 @@
 import { useHabits, type CustomHabit } from "@/hooks/useHabits";
+import { HabitRankDisplay } from "./HabitRankDisplay";
 import { Check, CheckCircle2, PartyPopper, Share2, Loader2, Plus, Pencil, Trash2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useRef, useCallback } from "react";
@@ -24,7 +25,7 @@ interface HabitTrackerProps {
 }
 
 export const HabitTracker = ({ isRamadhan = false }: HabitTrackerProps) => {
-    const { habits, completedMap, toggleHabit, addHabit, editHabit, deleteHabit, progress } = useHabits(isRamadhan);
+    const { habits, completedMap, toggleHabit, addHabit, editHabit, deleteHabit, progress, exp } = useHabits(isRamadhan);
     const [showCongrats, setShowCongrats] = useState(false);
     const cardRef = useRef<HTMLDivElement>(null);
     const [isSharing, setIsSharing] = useState(false);
@@ -154,6 +155,7 @@ export const HabitTracker = ({ isRamadhan = false }: HabitTrackerProps) => {
 
     return (
         <div className="px-5 mb-5 mt-2">
+            <HabitRankDisplay exp={exp} />
             <div ref={cardRef} className="rounded-2xl shadow-neu p-5 bg-background border border-border/50">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2 text-foreground font-bold">
@@ -271,14 +273,19 @@ export const HabitTracker = ({ isRamadhan = false }: HabitTrackerProps) => {
                                                 </button>
                                             </>
                                         )}
-                                        <div className={`w-6 h-6 rounded-full flex items-center justify-center border-2 transition-colors ml-1
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleHabit(item.id);
+                                            }}
+                                            className={`w-6 h-6 rounded-full flex items-center justify-center border-2 transition-colors ml-1 cursor-pointer
                                             ${isCompleted
-                                                ? 'border-primary bg-primary text-primary-foreground'
-                                                : 'border-muted-foreground/30 bg-transparent'
-                                            }`}
+                                                    ? 'border-primary bg-primary text-primary-foreground'
+                                                    : 'border-muted-foreground/30 bg-transparent hover:border-primary/50'
+                                                }`}
                                         >
                                             {isCompleted && <Check className="w-4 h-4" />}
-                                        </div>
+                                        </button>
                                     </div>
                                 </motion.div>
                             );

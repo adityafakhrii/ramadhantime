@@ -13,6 +13,9 @@ export interface HabitProgress {
 
 const HABITS_DEF_KEY = 'akyash-custom-habits';
 const HABITS_PROGRESS_KEY = 'akyash-habits-progress';
+const HABITS_EXP_KEY = 'akyash-habits-exp';
+const HABITS_MONTH_KEY = 'akyash-habits-month';
+
 
 const DEFAULT_HABITS: CustomHabit[] = [
   { id: 'sholat5', label: 'Sholat 5 Waktu', icon: '🕌' },
@@ -32,6 +35,13 @@ function getTodayString() {
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+function getCurrentMonthString() {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  return `${year}-${month}`;
 }
 
 function generateId(): string {
@@ -77,17 +87,52 @@ export function useHabits(isRamadhan: boolean = false) {
     localStorage.setItem(HABITS_PROGRESS_KEY, JSON.stringify(progress));
   }, [progress]);
 
-  // Handle midnight rollover
+  // Load EXP and Level Month
+  const [exp, setExp] = useState<number>(() => {
+    try {
+      const stored = localStorage.getItem(HABITS_EXP_KEY);
+      if (stored) return parseInt(stored, 10) || 0;
+    } catch { }
+    return 0;
+  });
+
+  const [lastResetMonth, setLastResetMonth] = useState<string>(() => {
+    try {
+      const stored = localStorage.getItem(HABITS_MONTH_KEY);
+      if (stored) return stored;
+    } catch { }
+    return getCurrentMonthString();
+  });
+
+  useEffect(() => {
+    localStorage.setItem(HABITS_EXP_KEY, exp.toString());
+  }, [exp]);
+
+  useEffect(() => {
+    localStorage.setItem(HABITS_MONTH_KEY, lastResetMonth);
+  }, [lastResetMonth]);
+
+  // Handle midnight rollover and monthly reset
   useEffect(() => {
     const checkDate = () => {
       const today = getTodayString();
       if (progress.date !== today) {
         setProgress({ date: today, completed: {} });
       }
+
+      const currentMonth = getCurrentMonthString();
+      if (currentMonth !== lastResetMonth) {
+        setExp(0);
+        setLastResetMonth(currentMonth);
+      }
     };
     const intervalId = setInterval(checkDate, 1000 * 60 * 30); // check every 30min
+
+    // Also check on mount
+    checkDate();
+
     return () => clearInterval(intervalId);
-  }, [progress.date]);
+  }, [progress.date, lastResetMonth]);
 
   // Build the active habits list (user habits + ramadhan extras if enabled)
   const activeHabits: CustomHabit[] = isRamadhan
@@ -95,13 +140,21 @@ export function useHabits(isRamadhan: boolean = false) {
     : habits.filter(h => !RAMADHAN_EXTRA_HABITS.some(rh => rh.id === h.id));
 
   const toggleHabit = useCallback((habitId: string) => {
-    setProgress(prev => ({
-      ...prev,
-      completed: {
-        ...prev.completed,
-        [habitId]: !prev.completed[habitId],
-      }
-    }));
+    setProgress(prev => {
+      const isCompleted = prev.completed[habitId] || false;
+      const willComplete = !isCompleted;
+
+      // Update exp
+      setExp(curr => Math.max(0, curr + (willComplete ? 10 : -10)));
+
+      return {
+        ...prev,
+        completed: {
+          ...prev.completed,
+          [habitId]: willComplete,
+        }
+      };
+    });
   }, []);
 
   const addHabit = useCallback((label: string, icon: string) => {
@@ -136,5 +189,6 @@ export function useHabits(isRamadhan: boolean = false) {
     editHabit,
     deleteHabit,
     progress: calculateProgress(),
+    exp,
   };
 }
