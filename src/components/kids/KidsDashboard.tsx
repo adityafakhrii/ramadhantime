@@ -18,9 +18,9 @@ const KidsDashboard: FC<Props> = ({ character, onBack }) => {
     const [activeView, setActiveView] = useState<KidsViewType>('today');
 
     return (
-        <div className="relative h-screen max-w-md mx-auto flex flex-col overflow-hidden bg-slate-50 font-sans shadow-2xl">
-            {/* Top Bar floats over content */}
-            <div className="absolute top-0 left-0 w-full z-40">
+        <div className="relative h-screen max-w-md mx-auto flex flex-col overflow-hidden bg-slate-50 font-sans shadow-2xl pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]">
+            {/* Top Bar */}
+            <div className="w-full z-40">
                 <KidsTopBar character={character} onBack={onBack} activeView={activeView} />
             </div>
 

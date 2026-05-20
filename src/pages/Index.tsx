@@ -155,7 +155,7 @@ const Index = () => {
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
-            className="fixed top-4 left-4 right-4 z-[100] bg-primary text-primary-foreground p-4 rounded-2xl shadow-xl flex items-center justify-between"
+            className="fixed top-[calc(env(safe-area-inset-top,0px)+1rem)] left-4 right-4 z-[100] bg-primary text-primary-foreground p-4 rounded-2xl shadow-xl flex items-center justify-between"
           >
             <div>
               <p className="font-bold text-lg">Alarm Berbunyi!</p>
@@ -171,7 +171,7 @@ const Index = () => {
         )}
       </AnimatePresence>
 
-      <div className="min-h-screen bg-background pb-20">
+      <div className="min-h-screen bg-background pb-20 pt-[env(safe-area-inset-top,0px)]">
         <div className="max-w-lg mx-auto">
           <AnimatePresence mode="wait">
             {activeTab === 'home' && (

@@ -11,17 +11,17 @@ const KidsCharacterSelect: FC<Props> = ({ onSelect }) => {
     const navigate = useNavigate();
 
     return (
-        <div className="relative min-h-screen max-w-md mx-auto flex overflow-hidden font-sans shadow-2xl bg-white">
+        <div className="relative min-h-screen max-w-md mx-auto flex overflow-hidden font-sans shadow-2xl bg-white pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]">
             {/* Back button to return to main app */}
             <button
                 onClick={() => navigate('/')}
-                className="absolute top-6 left-4 z-50 p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md border hover:bg-white"
+                className="absolute top-[calc(env(safe-area-inset-top,0px)+1.5rem)] left-4 z-50 p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md border hover:bg-white"
             >
                 <ChevronLeft className="w-5 h-5 text-slate-700" />
             </button>
 
             {/* Title */}
-            <div className="absolute top-16 w-full flex justify-center z-40 pointer-events-none">
+            <div className="absolute top-[calc(env(safe-area-inset-top,0px)+4rem)] w-full flex justify-center z-40 pointer-events-none">
                 <div className="bg-white/90 backdrop-blur-md px-8 py-3 rounded-full shadow-lg border-[3px] border-white/60">
                     <h1 className="text-5xl font-extrabold flex items-center gap-2 drop-shadow-sm" style={{ fontFamily: 'cursive' }}>
                         <span className="text-amber-800">Mili</span>

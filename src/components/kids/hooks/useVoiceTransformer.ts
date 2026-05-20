@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { toast } from '@/hooks/use-toast';
 
 export const useVoiceTransformer = () => {
     const [isRecording, setIsRecording] = useState(false);
@@ -36,6 +37,11 @@ export const useVoiceTransformer = () => {
             return true;
         } catch (err) {
             console.error('Microphone access denied:', err);
+            toast({
+                title: "Akses Mikrofon Gagal",
+                description: "Pastikan Anda memberikan izin perekaman audio (mikrofon) untuk aplikasi Akyash Pro.",
+                variant: "destructive",
+            });
             setIsPermissionGranted(false);
             return false;
         }

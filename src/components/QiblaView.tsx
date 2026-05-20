@@ -77,10 +77,10 @@ export const QiblaView = ({ onBack }: QiblaViewProps) => {
             // Android / standard browsers
             // For absolute orientation: alpha is degrees from North (clockwise)
             // event.absolute === true means it's relative to Earth's reference frame
-            if (event.absolute || hasAbsolute.current) {
+            if (event.absolute || event.type === 'deviceorientationabsolute') {
                 rawHeading = (360 - event.alpha) % 360;
                 setAccuracy('high');
-            } else {
+            } else if (!('ondeviceorientationabsolute' in window)) {
                 // Non-absolute fallback — less reliable but better than nothing
                 rawHeading = (360 - event.alpha) % 360;
                 setAccuracy('low');
@@ -105,7 +105,6 @@ export const QiblaView = ({ onBack }: QiblaViewProps) => {
     // Handler specifically for the `deviceorientationabsolute` event (Chrome Android)
     const handleAbsoluteOrientation = useCallback((event: DeviceOrientationEvent) => {
         hasAbsolute.current = true;
-        // Remove the non-absolute listener if we got an absolute one
         handleOrientationEvent(event);
     }, [handleOrientationEvent]);
 
@@ -132,18 +131,21 @@ export const QiblaView = ({ onBack }: QiblaViewProps) => {
             // Cleanup previous listeners
             if (cleanupRef.current) cleanupRef.current();
 
-            // Strategy: listen to both events, prefer absolute
-            // deviceorientationabsolute is Chrome-specific but gives true north
+            // Strategy: listen to absolute if available (Android), otherwise fallback to standard (iOS/other)
             const absHandler = handleAbsoluteOrientation as EventListener;
             const stdHandler = handleOrientationEvent as EventListener;
 
-            window.addEventListener('deviceorientationabsolute', absHandler, true);
-            window.addEventListener('deviceorientation', stdHandler, true);
-
-            cleanupRef.current = () => {
-                window.removeEventListener('deviceorientationabsolute', absHandler, true);
-                window.removeEventListener('deviceorientation', stdHandler, true);
-            };
+            if ('ondeviceorientationabsolute' in window) {
+                window.addEventListener('deviceorientationabsolute', absHandler, true);
+                cleanupRef.current = () => {
+                    window.removeEventListener('deviceorientationabsolute', absHandler, true);
+                };
+            } else {
+                window.addEventListener('deviceorientation', stdHandler, true);
+                cleanupRef.current = () => {
+                    window.removeEventListener('deviceorientation', stdHandler, true);
+                };
+            }
 
             // Set a timeout — if no data comes in 4s, sensor is likely unavailable
             setTimeout(() => {
@@ -159,9 +161,62 @@ export const QiblaView = ({ onBack }: QiblaViewProps) => {
         }
     }, [handleOrientationEvent, handleAbsoluteOrientation]);
 
-    // Auto-start or prompt for gesture
+    // Native Android Compass Integration
     useEffect(() => {
         if (!location) return;
+
+        const isNativeSupported = (window as any).AndroidCompass && 
+                                  typeof (window as any).AndroidCompass.isSupported === 'function' && 
+                                  (window as any).AndroidCompass.isSupported();
+
+        if (!isNativeSupported) return;
+
+        console.log("Native Android Compass detected and active!");
+        setSensorStatus('active');
+        setAccuracy('high');
+
+        const handleNativeCompass = (event: any) => {
+            const rawHeading = event.detail.heading;
+            if (rawHeading !== null && rawHeading !== undefined) {
+                eventCount.current++;
+                const smoothed = lowPassFilter(rawHeading, smoothedHeading.current, 0.25);
+                smoothedHeading.current = smoothed;
+                setHeading(smoothed);
+            }
+        };
+
+        window.addEventListener('nativeCompassUpdate' as any, handleNativeCompass);
+
+        // Fallback polling jika event lambat dikirim via IPC webview
+        const pollInterval = setInterval(() => {
+            const nativeHeading = (window as any).AndroidCompass.getHeading();
+            if (nativeHeading >= 0) {
+                const smoothed = lowPassFilter(nativeHeading, smoothedHeading.current, 0.25);
+                smoothedHeading.current = smoothed;
+                setHeading(smoothed);
+            }
+        }, 100);
+
+        return () => {
+            window.removeEventListener('nativeCompassUpdate' as any, handleNativeCompass);
+            clearInterval(pollInterval);
+        };
+    }, [location]);
+
+    // Auto-start or prompt for gesture (Web Fallback)
+    useEffect(() => {
+        if (!location) return;
+
+        const isNativeSupported = (window as any).AndroidCompass && 
+                                  typeof (window as any).AndroidCompass.isSupported === 'function' && 
+                                  (window as any).AndroidCompass.isSupported();
+
+        // Jika didukung secara native oleh Android, jangan jalankan compass berbasis web standar
+        if (isNativeSupported) {
+            setSensorStatus('active');
+            setAccuracy('high');
+            return;
+        }
 
         const DOE = DeviceOrientationEvent as unknown as {
             requestPermission?: () => Promise<string>;

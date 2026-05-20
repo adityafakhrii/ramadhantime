@@ -16,13 +16,19 @@ export const TalkingCharacterModule: FC<Props> = ({ character, onSpeakingChange 
         }
     }, [isRecording, isPlaying, onSpeakingChange]);
 
-    const handlePointerDown = () => {
+    const handleStart = (e: React.TouchEvent | React.MouseEvent) => {
+        if (e.type === 'touchstart') {
+            e.preventDefault();
+        }
         if (!isRecording && !isPlaying) {
             startRecording();
         }
     };
 
-    const handlePointerUp = () => {
+    const handleEnd = (e: React.TouchEvent | React.MouseEvent) => {
+        if (e.type === 'touchend') {
+            e.preventDefault();
+        }
         if (isRecording) {
             stopRecording(character);
         }
@@ -43,9 +49,11 @@ export const TalkingCharacterModule: FC<Props> = ({ character, onSpeakingChange 
 
             {/* Mic Button */}
             <button
-                onPointerDown={handlePointerDown}
-                onPointerUp={handlePointerUp}
-                onPointerLeave={handlePointerUp}
+                onTouchStart={handleStart}
+                onTouchEnd={handleEnd}
+                onMouseDown={handleStart}
+                onMouseUp={handleEnd}
+                onMouseLeave={handleEnd}
                 // Preclude context menu on long-press (mobile)
                 onContextMenu={(e) => e.preventDefault()}
                 className={`
